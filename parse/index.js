@@ -18,7 +18,7 @@ parseArray.forEach(appId =>
     });
 
     let parseApp = new ParseServer({
-        serverURL: 'parse',
+        serverURL: 'http://0.0.0.0:7311',
         masterKey: process.env.MASTER_KEY,
         appId: appId,
         databaseURI: db.buildConnectionUrl(process.env, appId),
