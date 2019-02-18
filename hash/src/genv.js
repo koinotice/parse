@@ -147,7 +147,7 @@ async function init() {
 
     //app.token = await TestToken.at(app.tokenAddress)
     app.hashdice = await HashDice.at(app.hashdiceAddress)
-    app.accounts = await web3.eth.getAccounts()
+    web3.eth.getAccounts((err, accounts) => { app.accounts= accounts }
     //await getBetOrder(2,2,1)
     //events()
     // await CloseRound.apply(this,[5,1])

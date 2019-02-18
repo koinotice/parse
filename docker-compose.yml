@@ -1,22 +1,28 @@
-version: '2'
+version: '3'
 
 services:
   parse:
-    build: .
+    build: ./parse
     environment:
       - DB_HOST=mongo:27017
       - MASTER_KEY=123456
-      - APP_IDS=app1,app2
-#      - DB_USERNAME=pmker
-#      - DB_PASSWORD=Zheli123
+      - APP_IDS=pmker,dev
+      - DB_USERNAME=root
+      - DB_PASSWORD=Zheli123
       - SERVER_URL=http://localhost:1337
       - DASHBOARD_USERNAME=pmker
-      - DASHBOARD_PASSWORD=56os.com
+      - DASHBOARD_PASSWORD=Zheli123
+      - DB_URL=postgres://pmker:Zheli123@postgresql
     ports:
       - 1337:1337
-    # volumes:
-    #   - ./parse/scripts:/parse/scripts  
-    # entrypoint: ['/parse/scripts/wait_for_mongo.sh']  
+
+    volumes:
+      - ./parse/cloud:/app/cloud
+#      - ./parse/config:/parse-server/config
+#      - ./parse/scripts:/parse-server/scripts
+#    # volumes:
+#    #   - ./parse/scripts:/parse/scripts
+#    entrypoint: ['/parse-server/scripts/wait_for_postgres.sh']
 
   # mongodb:
   #   image: 'bitnami/mongodb:latest'
@@ -43,12 +49,54 @@ services:
 #     - ./db:/data/db
 
   mongo:
-    container_name: mongo
-    image: mongo
-    volumes:
-    - ./data:/data/db
+    image: 'bitnami/mongodb:latest'
     ports:
     - "27017:27017"
+    environment:
+    - MONGODB_ROOT_PASSWORD=Zheli123
+
+    - MONGODB_USERNAME=pmker
+    - MONGODB_PASSWORD=Zheli123
+    - MONGODB_DATABASE=pmker
+
+
+  postgresql:
+    image: 'bitnami/postgresql:latest'
+    ports:
+    - '5432:5432'
+    environment:
+    - POSTGRESQL_USERNAME=pmker
+    - POSTGRESQL_PASSWORD=Zheli123
+    - POSTGRESQL_DATABASE=pmker
+
+
+#    container_name: postgres
+#    image: postgres:latest
+##    env_file:
+##      - .env
+#    expose:
+#    - 5432
+#    ports:
+#      - ${POSTGRES_PORT}:5432
+#
+#    environment:
+#    - POSTGRES_DB=${POSTGRES_DB}
+#    - POSTGRES_USER=${POSTGRES_USER}
+#    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#
+#    volumes:
+#    - ${POSTGRES_HOST_DIR}:/var/lib/postgresql/data
+      #      - target: 5433 # inside container
+#        published: 5432
+#        protocol: tcp # tcp / udp
+#        mode: host # use ingress for swarm load balancing
+#  mongo:
+#    container_name: mongo
+#    image: mongo
+#    volumes:
+#    - ./data:/data/db
+#    ports:
+#    - "27017:27017"
 #  mongo:
 #    image: mongo
 #    restart: always
@@ -75,14 +123,14 @@ services:
     restart: always
     entrypoint: ["redis-server", "/etc/redis.conf"]
 
-  phpredisadmin:
-    image: erikdubbelboer/phpredisadmin:latest
-    ports:
-    - "${REDISMYADMIN_HOST_PORT}:80"
-
-    environment:
-    - REDIS_1_HOST=redis
-    - REDIS_1_PORT=6379
+#  phpredisadmin:
+#    image: erikdubbelboer/phpredisadmin:latest
+#    ports:
+#    - "${REDISMYADMIN_HOST_PORT}:80"
+#
+#    environment:
+#    - REDIS_1_HOST=redis
+#    - REDIS_1_PORT=6379
 
 #  lab:
 #    #build: ./lab

@@ -2,6 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/chisel-parse-server-starter" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/docker-mongo-auth" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/parse" vcs="Git" />
   </component>
 </project>
