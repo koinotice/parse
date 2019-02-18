@@ -5,5 +5,7 @@
 
 composer.lock
 yarn.lock
-
+db
+log
+hash/node_modules
 .env
