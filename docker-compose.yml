@@ -14,7 +14,7 @@ services:
       - DASHBOARD_PASSWORD=Zheli123
       - DB_URL=postgres://pmker:Zheli123@postgresql
     ports:
-      - 1337:1337
+      - 7311:1337
 
     volumes:
       - ./parse/cloud:/app/cloud

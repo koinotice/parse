@@ -15,6 +15,6 @@ var api = new ParseServer({
 // Serve the Parse API on the /parse URL prefix
 app.use('/parse', api);
 
-app.listen(1337, function() {
+app.listen(2337, function() {
     console.log('parse-server-example running on port 1337.');
 });
