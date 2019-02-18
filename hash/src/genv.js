@@ -148,7 +148,14 @@ async function init() {
     //app.token = await TestToken.at(app.tokenAddress)
     app.hashdice = await HashDice.at(app.hashdiceAddress)
 
-    app.currentAccount = (await web3.eth.getAccounts())[2];
+    try{
+        app.currentAccount = (await web3.eth.getAccounts())[2];
+    }catch (e) {
+      await init()
+    }
+
+
+    console.log(app.currentAccount)
     //web3.eth.getAccounts((err, accounts) => { app.accounts= accounts })
     //await getBetOrder(2,2,1)
     //events()
