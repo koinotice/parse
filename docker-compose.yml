@@ -7,8 +7,8 @@ services:
       - DB_HOST=mongo:27017
       - MASTER_KEY=123456
       - APP_IDS=app1,app2
-      - DB_USERNAME=pmker
-      - DB_PASSWORD=Zheli123
+#      - DB_USERNAME=pmker
+#      - DB_PASSWORD=Zheli123
       - SERVER_URL=http://localhost:1337
       - DASHBOARD_USERNAME=pmker
       - DASHBOARD_PASSWORD=56os.com
@@ -28,33 +28,43 @@ services:
   #     - MONGODB_DATABASE=pmker
 
   #     - ../mongo-entrypoint:/docker-entrypoint-initdb.d
-  # mongo:
-  #   build: ./docker-mongo-auth
-  #   environment:
-  #     - AUTH=yes
-  #     - MONGODB_ADMIN_USER=pmker
-  #     - MONGODB_ADMIN_PASS=Zheli123
-  #     - MONGODB_APPLICATION_DATABASE=pmker
-  #     - MONGODB_APPLICATION_USER=user
-  #     - MONGODB_APPLICATION_PASS=Zheli123
-  #   ports:
-  #     - 27017:27017
+#  mongo:
+#     image: koinotice/mongo:latest
+#     environment:
+#       - AUTH=yes
+#       - MONGODB_ADMIN_USER=pmker
+#       - MONGODB_ADMIN_PASS=Zheli123
+#       - MONGODB_APPLICATION_DATABASE=pmker
+#       - MONGODB_APPLICATION_USER=user
+#       - MONGODB_APPLICATION_PASS=Zheli123
+#     ports:
+#       - 27017:27017
+#     volumes:
+#     - ./db:/data/db
+
   mongo:
+    container_name: mongo
     image: mongo
-    restart: always
-    ports:
-      - 27017:27017
-    env_file:
-      - .env  
     volumes:
-      - ./db:/data/db
-      #- ./**script-folder**/:/docker-entrypoint-initdb.d
-      # - ./mongo/data/db:/data/db
-      - ./mongo/docker-entrypoint-initdb:/docker-entrypoint-initdb.d
-      - ./mongo/scripts:/scripts/  
-    # environment:
-    #   MONGO_INITDB_ROOT_USERNAME: root
-    #   MONGO_INITDB_ROOT_PASSWORD: Zheli123
+    - ./data:/data/db
+    ports:
+    - "27017:27017"
+#  mongo:
+#    image: mongo
+#    restart: always
+#    ports:
+#      - 27017:27017
+#    env_file:
+#      - .env
+#    volumes:
+#      - ./db:/data/db
+#      #- ./**script-folder**/:/docker-entrypoint-initdb.d
+#      # - ./mongo/data/db:/data/db
+##      - ./mongo/docker-entrypoint-initdb:/docker-entrypoint-initdb.d
+##      - ./mongo/scripts:/scripts/
+#    # environment:
+#    #   MONGO_INITDB_ROOT_USERNAME: root
+#    #   MONGO_INITDB_ROOT_PASSWORD: Zheli123
 
   redis:
     image: redis:${REDIS_VERSION}
@@ -73,19 +83,29 @@ services:
     environment:
     - REDIS_1_HOST=redis
     - REDIS_1_PORT=6379
-#
-  hash:
-    #build: ./hash
-    image: hash:latest
-    ports:
-    - 5555:8000
-    volumes:
-    - ./hash/:/hash
-    environment:
-    - REDIS_URL=redis://redis:7379
-    - NODE_ENV=development
-    - PORT=3000
 
+#  lab:
+#    #build: ./lab
+#    image: posquit0/koa-rest-api-boilerplate
+#    ports:
+#    - 5555:7071
+#    environment:
+#      - PORT=7071
+#    # volumes:
+#    # - ./hash/src:/var/www/app/src
+##
+#  hash:
+#    build: ./hash
+#    #image: hash:latest
+#    ports:
+#    - 5588:8000
+#    volumes:
+#    - ./hash/src:/var/www/app/src
+##    environment:
+##    - REDIS_URL=redis://redis:7379
+##    - NODE_ENV=development
+##    - PORT=3000
+#
 
 
 

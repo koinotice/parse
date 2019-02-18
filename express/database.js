@@ -11,7 +11,7 @@ module.exports =
 
         // Add the host and database
         url += env.DB_HOST + '/parse_' + appId + '?authSource=admin';
-
+        console.log(url)
         return url;
     }
 };
