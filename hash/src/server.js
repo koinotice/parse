@@ -165,7 +165,7 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.HASH_PORT || 8000;
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });
