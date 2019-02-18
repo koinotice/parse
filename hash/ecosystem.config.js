@@ -17,7 +17,7 @@ module.exports = {
         }
     },
         {
-            name: 'HashApi',
+            name: 'HashGenv',
             script: 'src/genv.js',
 
             instances: 1,
