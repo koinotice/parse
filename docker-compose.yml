@@ -73,15 +73,16 @@ services:
     environment:
     - REDIS_1_HOST=redis
     - REDIS_1_PORT=6379
-
+#
   hash:
-    build: ./hash
+    #build: ./hash
+    image: hash:latest
     ports:
-    - 5555:5555
+    - 5555:8000
     volumes:
-    - ./hash/:/var/www/app
+    - ./hash/:/hash
     environment:
-    - REDIS_URL=redis://localhost:6379
+    - REDIS_URL=redis://redis:7379
     - NODE_ENV=development
     - PORT=3000
 

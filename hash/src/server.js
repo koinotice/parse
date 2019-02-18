@@ -4,18 +4,10 @@ const {REDIS_URL, REDIS_PORT} = require("./env.json")
 const isJSON = require('is-json');
 var cors = require('cors')
 
-const {Redis} = require('./lib/redis');
+const {client} = require('./lib/redis');
 const _ = require('lodash');
-const client = new Redis({
-    host: REDIS_URL,
-    port: REDIS_PORT,
-});
-client.on('connect', function () {
-    console.info('redis connect success on ');
-});
-client.on('error', function (error) {
-    console.error(error);
-});
+
+
 const app = express();
 app.use(express.static('public'));
 app.use(cors())
@@ -173,7 +165,7 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 
-const PORT = process.env.PORT || 5555;
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });

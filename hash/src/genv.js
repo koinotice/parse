@@ -28,18 +28,9 @@ const hashdice_artifact = require('./build/contracts/HashDice.json');
 const TestToken = contract(testtoken_artifact);
 const HashDice = contract(hashdice_artifact);
 
-const {Redis} = require('./lib/redis');
+const {client} = require('./lib/redis');
 const _ = require('lodash');
-const client = new Redis({
-    host: REDIS_URL,
-    port: REDIS_PORT,
-});
-client.on('connect', function() {
-    console.info('redis connect success on ');
-});
-client.on('error', function(error) {
-    console.error(error);
-});
+ 
 
 //TestToken.setProvider(web3.currentProvider);
 HashDice.setProvider(web3.currentProvider);
