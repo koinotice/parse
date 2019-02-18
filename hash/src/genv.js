@@ -2,10 +2,15 @@ const Web3 = require('web3');
 const assert = require("assert")
 const HDWalletProvider = require("truffle-hdwallet-provider")
 const fs = require("fs")
-const {PROVIDER_URI, WALLET_MNEMONIC, GAS_PRICE, GAS_LIMIT,HASH_DICE_ADDRESS,REDIS_URL,REDIS_PORT} = require("./env.json")
+const {PROVIDER_URI, WALLET_MNEMONIC, GAS_PRICE, GAS_LIMIT,HASH_DICE_ADDRESS,REDIS_URL,REDIS_PORT,DEPLOYMENT_ACCOUNT_PRIVATE_KEY} = require("./env.json")
 const {address} = require("./hashDice.json")
 const provider = new Web3.providers.HttpProvider("http://localhost:8545")
-const provider1 = new HDWalletProvider(WALLET_MNEMONIC, PROVIDER_URI, 0, 5)
+const provider2 = new HDWalletProvider(WALLET_MNEMONIC, PROVIDER_URI, 0, 5)
+
+
+const provider1 = new Web3.providers.HttpProvider(PROVIDER_URI);
+const deploymentPrivateKey = Buffer.from(DEPLOYMENT_ACCOUNT_PRIVATE_KEY, 'hex')
+
 
 const eachLimit = require('async/eachLimit')
 const ethUtil = require("ethereumjs-util")
@@ -149,7 +154,8 @@ async function init() {
     app.hashdice = await HashDice.at(app.hashdiceAddress)
 
     try{
-        app.currentAccount = (await web3.eth.getAccounts())[2];
+        app.currentAccount = web3.eth.accounts.privateKeyToAccount(DEPLOYMENT_ACCOUNT_PRIVATE_KEY);
+        ;
     }catch (e) {
       await init()
     }
