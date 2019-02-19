@@ -12,3 +12,4 @@ lab
 parse/node_modules
 hash/node_modules
 .env
+parse.env

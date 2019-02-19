@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  node:
+    image: bitnami/node
+    command: "sh -c 'npm install && npm start'"
+    volumes:
+    - ./app:/app

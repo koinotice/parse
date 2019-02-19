@@ -2,7 +2,6 @@ let express = require('express');
 let ParseServer = require('parse-server').ParseServer;
 let ParseDashboard = require('parse-dashboard');
 let db = require("./database");
-
 let app = express();
 let parseArray = process.env.APP_IDS.split(',');
 let dashboardArray = [];
