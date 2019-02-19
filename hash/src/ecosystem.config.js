@@ -1,7 +1,7 @@
 module.exports = {
     apps: [{
         name: 'HashApi',
-        script: 'src/server.js',
+        script: 'server.js',
 
         // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
         //args: 'one two',
@@ -18,11 +18,11 @@ module.exports = {
     },
         {
             name: 'HashGenv',
-            script: 'src/genv.js',
+            script: 'genv.js',
 
             instances: 1,
             autorestart: true,
-            watch: false,
+            watch: true,
             max_memory_restart: '1G',
             env: {
                 NODE_ENV: 'development'

@@ -1,6 +1,11 @@
 const express = require('express');
 const exphbs = require('express-handlebars');
-const {REDIS_URL, REDIS_PORT} = require("./env.json")
+require('dotenv').config({
+    path: __dirname + '/../../parse.env'
+});
+
+
+
 const isJSON = require('is-json');
 var cors = require('cors')
 
@@ -165,7 +170,7 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 
-const PORT = process.env.HASH_PORT || 8000;
+const PORT = process.env.HASH_PORT || 5555;
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });

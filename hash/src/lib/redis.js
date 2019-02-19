@@ -53,15 +53,18 @@ Redis.Command.setReplyTransformer('hget', function(result) {
   return result;
 });
 
-const {REDIS_URL,REDIS_PORT,REDIS_PASSWORD} = require("../env.json")
 
 
-const client = new Redis({
-    host: REDIS_URL,
-    port: REDIS_PORT,
-    password: REDIS_PASSWORD,
-    db: 0
-});
+
+const {
+    REDIS_HOST,
+    REDIS_PORT,
+    REDIS_PASSWORD,
+    REDIS_IO_URL
+} = process.env;
+
+
+const client = new Redis(REDIS_IO_URL);
 client.on('connect', function () {
     console.info('redis connect success on ');
 });
