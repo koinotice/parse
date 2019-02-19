@@ -54,8 +54,8 @@ services:
     - MONGODB_USERNAME=pmker
     - MONGODB_PASSWORD=Zheli123
     - MONGODB_DATABASE=pmker
-    volumes:
-    - './data:/bitnami'
+#    volumes:
+#    - './data:/bitnami'
 
 
   postgresql:
@@ -66,8 +66,8 @@ services:
     - POSTGRESQL_USERNAME=pmker
     - POSTGRESQL_PASSWORD=Zheli123
     - POSTGRESQL_DATABASE=pmker
-    volumes:
-    - './data:/bitnami'
+#    volumes:
+#    - './data:/bitnami'
 
     #    container_name: postgres
     #    image: postgres:latest
@@ -119,8 +119,8 @@ services:
     - '7379:6379'
     environment:
     - REDIS_PASSWORD=Zheli123
-    volumes:
-    - ./data/redis:/bitnami/redis
+#    volumes:
+#    - ./data/redis:/bitnami/redis
   #  redis:
   #    image: 'bitnami/redis:latest'
   #    ports:
