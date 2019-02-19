@@ -1,18 +1,18 @@
 version: '3'
 
 services:
-#  node:
-#    image: bitnami/node
-#    command: "sh -c 'npm install && npm start'"
-#    volumes:
-#    - app:/app
+  #  node:
+  #    image: bitnami/node
+  #    command: "sh -c 'npm install && npm start'"
+  #    volumes:
+  #    - app:/app
   parse:
     build: ./parse
 
     ports:
     - 7311:1337
     env_file:
-      - parse.env
+    - parse.env
     volumes:
     - ./parse/cloud:/app/cloud
   #      - ./parse/config:/parse-server/config
@@ -112,6 +112,7 @@ services:
   #    # environment:
   #    #   MONGO_INITDB_ROOT_USERNAME: root
   #    #   MONGO_INITDB_ROOT_PASSWORD: Zheli123
+
   redis:
     image: 'bitnami/redis:latest'
     ports:
@@ -119,8 +120,14 @@ services:
     environment:
     - REDIS_PASSWORD=Zheli123
     volumes:
+    - ./data/:/bitnami
+  #  redis:
+  #    image: 'bitnami/redis:latest'
+  #    ports:
+  #    - '7379:6379'
+  #    environment:
+  #    - REDIS_PASSWORD=Zheli123
 
-    - ./data/redis:/bitnami/redis/data
   #  redis:
   #    image: redis:${REDIS_VERSION}
   #    ports:
