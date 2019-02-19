@@ -84,8 +84,8 @@ async function updateRoom(roomId) {
     client.set("room_" + roomInfo.name, 1)
     try {
 
-        var query = new Parse.Query(Rooom);
-        query.equalTo('roomId', parseInt(id));
+        var query = new Parse.Query(Room);
+        query.equalTo('roomId', parseInt(roomId));
         let room = await query.first()
 
         if (room == undefined) {
@@ -93,13 +93,13 @@ async function updateRoom(roomId) {
             room.set("roomId", parseInt(roomId));
         }
         delete roomInfo.id
-        r.set(roomInfo)
-        await r.save()
+        room.set(roomInfo)
+        await room.save()
 
     } catch (e) {
         console.log(e)
     }
-    console.log("parse", "update room " + id)
+    console.log("parse", "update room " + roomId)
 
     //console.log(b.get("cc"))
 
