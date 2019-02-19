@@ -5,10 +5,10 @@ const fs = require("fs")
 const {PROVIDER_URI, WALLET_MNEMONIC, GAS_PRICE, GAS_LIMIT,HASH_DICE_ADDRESS,REDIS_URL,REDIS_PORT,DEPLOYMENT_ACCOUNT_PRIVATE_KEY} = require("./env.json")
 const {address} = require("./hashDice.json")
 const provider = new Web3.providers.HttpProvider("http://localhost:8545")
-const provider1 = new HDWalletProvider(WALLET_MNEMONIC, PROVIDER_URI, 0, 5)
+const provider2 = new HDWalletProvider(WALLET_MNEMONIC, PROVIDER_URI, 0, 5)
 
 
-//const provider1 = new Web3.providers.HttpProvider(PROVIDER_URI);
+const provider1 = new Web3.providers.HttpProvider(PROVIDER_URI);
 const deploymentPrivateKey = Buffer.from(DEPLOYMENT_ACCOUNT_PRIVATE_KEY, 'hex')
 
 
@@ -154,9 +154,7 @@ async function init() {
     app.hashdice = await HashDice.at(app.hashdiceAddress)
 
     try{
-        //app.currentAccount =await web3.eth.accounts;
-        app.accounts = await web3.eth.getAccounts()
-        app.currentAccount=app.accounts[2]
+        app.currentAccount = web3.eth.accounts.privateKeyToAccount(DEPLOYMENT_ACCOUNT_PRIVATE_KEY);
         ;
     }catch (e) {
       await init()
@@ -167,6 +165,7 @@ async function init() {
     //web3.eth.getAccounts((err, accounts) => { app.accounts= accounts })
     //await getBetOrder(2,2,1)
     //events()
+    await updateRoom(136)
     // await CloseRound.apply(this,[5,1])
 }
 

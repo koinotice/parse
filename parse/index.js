@@ -18,10 +18,13 @@ parseArray.forEach(appId =>
     });
 
     let parseApp = new ParseServer({
-        serverURL: 'http://0.0.0.0:7311',
+        serverURL: process.env.SERVER_URL,
         masterKey: process.env.MASTER_KEY,
         appId: appId,
         databaseURI: db.buildConnectionUrl(process.env, appId),
+        liveQuery: {
+            classNames: ["Rooms", "Orders"] // List of classes to support for query subscriptions
+        }
        // cloud: "./cloud/"+appId,
     });
 

@@ -9,7 +9,7 @@ services:
       - APP_IDS=pmker,dev
       - DB_USERNAME=root
       - DB_PASSWORD=Zheli123
-      - SERVER_URL=http://0.0.0.0:7311
+      - SERVER_URL=http://localhost:7311
       - DASHBOARD_USERNAME=pmker
       - DASHBOARD_PASSWORD=Zheli123
       #- DB_URL=postgres://pmker:Zheli123@postgresql
@@ -167,3 +167,7 @@ services:
   #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
   #     ME_CONFIG_MONGODB_ADMINPASSWORD: Zheli123
  
+networks:
+  default:
+    external:
+      name: ${GENV_DOCKER_NETWORK}
