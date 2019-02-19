@@ -1,0 +1,131 @@
+<pre>
+1、房间列表 hash<br>
+/hash/room
+{
+    data: {
+
+        15: {
+            id: "15",
+            creator: "0x1e2c589763c662e32C8e68db6b2A5A71A9C497fD",
+            erc20Addr: "0xc9F95b34f728BCe8A056d24ec27F056AF0a3443F",
+            symbol: "MOON",
+            name: "4444",
+            nominator: "10,10,10,1",
+            denominator: "28,28,23,14",
+            round: "0",
+            active: true,
+            roundActive: false,
+            currentMaxCompensate: "0",
+            lastLockedValue: "100000"
+        }
+    }
+}
+#我的房间列表<br>
+如：0x1560cB7d3a6fcA7b969BEBB70d7b8dF9221D94a6_room
+/hash/:address_room
+/hash/0x1e2c589763c662e32C8e68db6b2A5A71A9C497fD_room
+{
+    data: {
+
+        15: {
+            id: "15",
+            creator: "0x1e2c589763c662e32C8e68db6b2A5A71A9C497fD",
+            erc20Addr: "0xc9F95b34f728BCe8A056d24ec27F056AF0a3443F",
+            symbol: "MOON",
+            name: "4444",
+            nominator: "10,10,10,1",
+            denominator: "28,28,23,14",
+            round: "0",
+            active: true,
+            roundActive: false,
+            currentMaxCompensate: "0",
+            lastLockedValue: "100000"
+        }
+    }
+}
+
+
+#本期所有下注
+
+如：/hash/:order_$roomid_$roundid
+/hash/order_15_2
+{
+    data: {
+        2: {
+            owner: "0x1e2c589763c662e32C8e68db6b2A5A71A9C497fD",
+            totalValue: "100",
+            gain: "0",
+            betType: "0x1",
+            betValue: "0,0,0,100,0,0,0,0,0,0",
+            betTailInfo: ""
+        }
+    }
+}
+
+#本期我的下注
+/hash/:$address_$roomid_$roundid
+如：0x1560cB7d3a6fcA7b969BEBB70d7b8dF9221D94a6_9_2
+
+hash/0x1e2c589763c662e32C8e68db6b2A5A71A9C497fD_15_2
+
+{
+    data: {
+        2: {
+            owner: "0x1e2c589763c662e32C8e68db6b2A5A71A9C497fD",
+            totalValue: "100",
+            gain: "0",
+            betType: "0x1",
+            betValue: "0,0,0,100,0,0,0,0,0,0",
+            betTailInfo: ""
+        }
+    }
+}
+
+2:key<br>
+
+#房间期数订单明细<br>
+    如：order_9_1_5<br>
+    order_roomid_roundid_orderid<br>
+/order_15_2_2
+{
+    data: {
+        owner: "0x1e2c589763c662e32C8e68db6b2A5A71A9C497fD",
+        totalValue: "100",
+        gain: "0",
+        betType: "0x1",
+        betValue: "0,0,0,100,0,0,0,0,0,0",
+        betTailInfo: ""
+    }
+}
+
+
+期数信息<br>
+    如：round_9_2<br>
+    round_roomid_rounid<br>
+
+名字：<br>
+    /room/:name<br>
+    /room/大漠孤烟<br>
+    返回1说明存在
+
+系统相关<br>
+    时间<br>
+    /config/time<br>
+
+    币种列表<br>
+    /config/token<br>
+
+{
+    "symbol": "LRC",
+    "name": "Loopring",
+    "digits": 18,
+    "address": "0xEF68e7C694F40c8202821eDF525dE3782458639f",
+    "logo”: "https://loopring.org/log.png“,
+    “step”:100
+}
+
+<pre>
+
+
+
+

@@ -13,4 +13,5 @@ parse/node_modules
 hash/node_modules
 .env
 parse.env
-dice
+hash
+app/node_modules

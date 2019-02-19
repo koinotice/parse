@@ -6,7 +6,7 @@
   "scripts": {
     "pm2:start": "pm2 start server.js -i max --name=\"api-rest-js\"",
     "pm2:stop": "pm2 stop server.js",
-    "start": "node ./src/server.js",
+    "start": "node ./server.js",
     "test": "npm run test:cover",
     "code:lint": "eslint \"**/*.js\"",
     "test:unit": "mocha --full-trace --timeout 10000 test/unit/**/*.test.js",
@@ -29,11 +29,13 @@
   "author": "douglaspands",
   "license": "ISC",
   "dependencies": {
-    "async": "^2.6.1",
+    "async": "^2.6.2",
     "async-redis": "^1.1.5",
+    "bignumber.js": "^8.0.2",
     "body-parser": "^1.18.3",
     "dotenv": "^6.2.0",
     "eth-block-tracker": "^4.1.0",
+    "ethereumjs-util": "^6.1.0",
     "ethjs-provider-http": "^0.1.6",
     "express": "^4.16.4",
     "express-handlebars": "^3.0.0",
@@ -49,9 +51,9 @@
     "redis": "^2.8.0",
     "request": "^2.88.0",
     "truffle-contract": "^4.0.2",
-    "truffle-hdwallet-provider": "^1.0.2",
+    "truffle-hdwallet-provider": "^1.0.4",
     "truffle-privatekey-provider": "^1.0.0",
-    "web3": "^1.0.0-beta.37",
+    "web3": "^1.0.0-beta.46",
     "winston": "^3.1.0"
   },
   "devDependencies": {

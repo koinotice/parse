@@ -2,7 +2,10 @@ version: '3'
 
 services:
   node:
-    image: bitnami/node
-    command: "sh -c 'npm install && npm start'"
+    build: ./app
+    ports:
+    - 5555:5555
+    env_file:
+    - ./parse.env
     volumes:
-    - ./app:/app
+    - ./app:/usr/src/app
