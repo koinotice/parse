@@ -1,4 +1,4 @@
-const {Contract, Block} = require("./Models")
+const {Contract} = require("./Models")
 const Web3 = require('web3')
 const ZeroClientProvider = require('web3-provider-engine/zero')
 const nats = require('nats').connect(process.env.NAT_URL);

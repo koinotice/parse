@@ -5,12 +5,9 @@ const Contract = Datastore({
     autoload: true
 });
 
-const Block = Datastore({
-    filename: __dirname+'/db/block.json',
-    autoload: true
-});
+
 
 module.exports={
-    Contract,
-    Block
+    Contract
+
 }
