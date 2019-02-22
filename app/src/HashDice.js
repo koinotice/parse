@@ -1,8 +1,6 @@
 const _ = require('lodash');
 const logger = require('./lib/logger')
-require('dotenv').config({
-    path: __dirname + '/../server.env'
-});
+
 const Web3 = require('web3');
 
 const {client} = require('./lib/redis');

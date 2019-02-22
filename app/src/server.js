@@ -1,11 +1,5 @@
 const express = require('express');
 const exphbs = require('express-handlebars');
-require('dotenv').config({
-    path: __dirname + '/../server.env'
-});
-
-
-
 const isJSON = require('is-json');
 var cors = require('cors')
 

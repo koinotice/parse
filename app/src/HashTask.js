@@ -3,9 +3,7 @@ const logger = require('./lib/logger')
 
 const eachLimit = require('async/eachLimit')
 
-require('dotenv').config({
-    path: __dirname + '/../server.env'
-});
+
 const Web3 = require('web3');
 
 const {

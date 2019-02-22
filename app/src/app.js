@@ -1,5 +1,5 @@
 require('dotenv').config({
-    path: __dirname + '/../server.env'
+    path: __dirname + '/../../server.env'
 });
 const ZeroClientProvider = require('web3-provider-engine/zero')
 
