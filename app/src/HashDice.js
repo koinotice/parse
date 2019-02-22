@@ -130,7 +130,7 @@ class HashDice {
         // return (order.owner, order.startBlock, order.totalValue, order.gain, order.betType,
         //     order.closed, order.betValue);
         const orderInfo = {
-            owner: order[0],
+            owner: order[0].toLowerCase(),
             startBlock:order[1].toNumber(),
             totalValue: order[2].toString(10),
             gain: order[3].toString(10),

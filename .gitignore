@@ -5,7 +5,7 @@
 
 composer.lock
 yarn.lock
-db
+
 data
 log
 logs
