@@ -1,36 +1,19 @@
 {
-  "name": "api-rest-js",
-  "version": "0.1.0",
-  "description": "CORE API REST",
-  "main": "server.js",
+  "name": "watch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "BotFactory.js",
   "scripts": {
-    "pm2:start": "pm2 start server.js -i max --name=\"api-rest-js\"",
-    "pm2:stop": "pm2 stop server.js",
-    "start": "node ./src/server.js",
-    "test": "npm run test:cover",
-    "code:lint": "eslint \"**/*.js\"",
-    "test:unit": "mocha --full-trace --timeout 10000 test/unit/**/*.test.js",
-    "test:cover": "nyc mocha --timeout 10000 test/unit/**/*.test.js",
-    "test:int": "mocha --full-trace --timeout 10000 test/int/**/*.test.js",
-    "build": "npm run code:lint && npm run test:cover && npm run test:int"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js"
   },
-  "keywords": [
-    "rest",
-    "nodejs",
-    "js"
-  ],
-  "engines": {
-    "node": ">=8.9"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/douglaspands/api-rest-js.git"
-  },
-  "author": "douglaspands",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
   "dependencies": {
     "async": "^2.6.1",
     "async-redis": "^1.1.5",
+    "bip39": "^2.5.0",
     "body-parser": "^1.18.3",
     "dotenv": "^6.2.0",
     "eth-block-tracker": "^4.1.0",
@@ -44,6 +27,9 @@
     "is-type-of": "^1.2.1",
     "lodash": "^4.17.11",
     "moment": "^2.23.0",
+    "nats": "^1.2.2",
+    "nedb": "^1.8.0",
+    "nedb-async-await": "^0.1.2",
     "node-json-rpc": "^0.0.1",
     "parse": "^2.2.0",
     "redis": "^2.8.0",
@@ -51,18 +37,8 @@
     "truffle-contract": "^4.0.2",
     "truffle-hdwallet-provider": "^1.0.2",
     "truffle-privatekey-provider": "^1.0.0",
-    "web3": "^1.0.0-beta.37",
+    "web3": "^1.0.0-beta.46",
+    "web3-provider-engine": "^14.1.0",
     "winston": "^3.1.0"
-  },
-  "devDependencies": {
-    "chai": "^4.2.0",
-    "eslint": "^5.10.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "mocha": "^5.2.0",
-    "mock-require": "^3.0.2",
-    "nock": "^10.0.4",
-    "nyc": "^13.1.0",
-    "supertest": "^3.3.0"
   }
 }

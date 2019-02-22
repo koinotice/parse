@@ -1,0 +1,128 @@
+version: '3'
+
+services:
+  nats:
+    image: nats-hash:1.0
+    build:
+      context: './docker/nats'
+    container_name: hash-nats
+    expose:
+    - 4222
+    - 8222
+    ports:
+    - 4222:4222
+    - 8222:8222
+    restart: always
+
+
+  resgate:
+    image: resgate-hash:1.0
+    build:
+      context: './docker/resgate'
+    container_name: hash-resgate
+    expose:
+    - 8080
+    ports:
+    - 7200:8080
+    restart: always
+    command:
+      -n nats://admin:Zheli123@nats:4222
+    environment:
+    - NODE_ENV=staging
+    - DB_HOST=postgres-lupinemoon
+    - HEMERA_LOG_LEVEL=debug
+    - JAEGER_URL=jaeger
+    - NATS_URL=nats://admin@zheli123@nats:4222
+    - NATS_USER=ruser
+    - NATS_PW=T0pS3cr3t
+
+  parse:
+    build: ./parse
+
+    ports:
+    - 7311:1337
+    env_file:
+    - parse.env
+    volumes:
+    - ./parse/cloud:/app/cloud
+
+
+  mongo:
+    image: 'bitnami/mongodb:latest'
+    ports:
+    - "27017:27017"
+    environment:
+    - MONGODB_ROOT_PASSWORD=Zheli123
+    - MONGODB_USERNAME=pmker
+    - MONGODB_PASSWORD=Zheli123
+    - MONGODB_DATABASE=pmker
+#    volumes:
+#    - './data:/bitnami'
+
+
+  postgresql:
+    image: 'bitnami/postgresql:latest'
+    ports:
+    - '5432:5432'
+    environment:
+    - POSTGRESQL_USERNAME=pmker
+    - POSTGRESQL_PASSWORD=Zheli123
+    - POSTGRESQL_DATABASE=pmker
+#    volumes:
+#    - './data:/bitnami'
+
+#  redis:
+#    image: 'bitnami/redis:latest'
+#    ports:
+#    - '7379:6379'
+#    environment:
+#    - REDIS_PASSWORD=Zheli123
+
+  redis:
+      image: redis:${REDIS_VERSION}
+      ports:
+      - "${REDIS_HOST_PORT}:6379"
+      volumes:
+      - ${REDIS_CONF_FILE}:/etc/redis.conf:ro
+      restart: always
+      entrypoint: ["redis-server", "/etc/redis.conf"]
+
+#  rabbitmq:
+#    image: 'bitnami/rabbitmq:latest'
+#    ports:
+#    - 15672:15672
+#    environment:
+#    - RABBITMQ_PASSWORD=my_password
+
+
+
+#    volumes:
+#    - ./data/redis:/bitnami/redis
+  hashapp:
+    build: ./app/
+    #image: hashapp:latest
+    volumes:
+    - ./app:/app
+    - /app/node_modules/
+    - ./app/logs:/app/logs
+    ports:
+        - '7300:80'
+    environment:
+    - NODE_ENV=development
+
+#  app:
+#    build: ./app
+#    ports:
+#    - 5555:5555
+#    env_file:
+#    - ./parse.env
+#    volumes:
+#    - ./app/src:/usr/src/app/src
+#    - /usr/src/app/node_modules
+networks:
+  genv-dev:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.3.0.0/24
+

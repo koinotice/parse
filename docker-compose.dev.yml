@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  node:
+  app:
     build: ./app
     ports:
     - 5555:5555
@@ -9,3 +9,10 @@ services:
     - ./parse.env
     volumes:
     - ./app:/usr/src/app
+    - /usr/src/app/node_modules
+
+
+networks:
+  default:
+    external:
+      name: ${GENV_DOCKER_NETWORK}

@@ -2,16 +2,17 @@
 
 const Parse = require('parse/node');
 
+
 const {
-    REDIS_HOST,
-    REDIS_PORT,
-    REDIS_PASSWORD,
-    REDIS_IO_URL
+
+    PARSE_SERVER_URL,
+    PARSE_ID,
+    PARSE_MASTER_KEY
 } = process.env;
 
-Parse.initialize("pmker","pmker", "Zheli123");
+Parse.initialize(PARSE_ID,PARSE_ID, PARSE_MASTER_KEY);
 
-Parse.serverURL = 'http://parse:1337/app/pmker'
+Parse.serverURL = PARSE_SERVER_URL+"/"+PARSE_ID
 
 
 module.exports =   {

@@ -53,13 +53,7 @@ Redis.Command.setReplyTransformer('hget', function(result) {
   return result;
 });
 
-
-
-
 const {
-    REDIS_HOST,
-    REDIS_PORT,
-    REDIS_PASSWORD,
     REDIS_IO_URL
 } = process.env;
 

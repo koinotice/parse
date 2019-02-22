@@ -1,7 +1,7 @@
 const express = require('express');
 const exphbs = require('express-handlebars');
 require('dotenv').config({
-    path: __dirname + '/../../parse.env'
+    path: __dirname + '/../server.env'
 });
 
 
@@ -11,6 +11,8 @@ var cors = require('cors')
 
 const {client} = require('./lib/redis');
 const _ = require('lodash');
+
+const http = require('http')
 
 
 const app = express();
@@ -34,8 +36,8 @@ const Order = Parse.Object.extend("Order");
 
 app.get('/api/rooms', async (req, res) => {
 
-    let {page,limit} = req.query;
-    console.log(req.params)
+    let {page,limit,owner,roomId,name} = req.query;
+
 
     page = parseInt(page) || 1;
 
@@ -48,6 +50,17 @@ app.get('/api/rooms', async (req, res) => {
     const query = new Parse.Query(Room);
 
     query.equalTo('active', true);
+
+    if(owner){
+        query.equalTo('owner', owner.toLowerCase());
+    }
+    if(roomId){
+        query.equalTo('roomId', parseInt(roomId));
+    }
+    if(name){
+        query.equalTo('name', name);
+    }
+
     query.limit(limit);
     query.skip(limit * (page - 1));
     query.descending('createdAt');// 先进先出，正序排列
@@ -57,9 +70,9 @@ app.get('/api/rooms', async (req, res) => {
 });
 
 
-app.get('/api/order', async (req, res) => {
+app.get('/api/orders', async (req, res) => {
 
-    let {page,limit,owner,roomId,roundId,orderId} = req.query;
+    let {page,limit,owner,roomId,orderId} = req.query;
     console.log(req.params)
 
     page = parseInt(page) || 1;
@@ -74,15 +87,12 @@ app.get('/api/order', async (req, res) => {
 
     const query = new Parse.Query(Order);
     if(owner){
-        query.equalTo('owner', owner);
+        query.equalTo('owner', owner.toLowerCase());
     }
     if(roomId){
         query.equalTo('roomId', parseInt(roomId));
     }
 
-    if(roundId){
-        query.equalTo('roundId', parseInt(roundId));
-    }
 
     if(orderId){
         query.equalTo('orderId', parseInt(orderId));
@@ -104,50 +114,50 @@ app.get('/api/order', async (req, res) => {
 
 
 
-
-app.get('/api/:key', async (req, res) => {
-    const {key} = req.params;
-    let result,data={};
-    try {
-        result =await client.get(key);
-        data = isJSON(result) ? JSON.parse(result) : result;
-    }catch (e) {
-       console.log(e)
-    }
-    return res.json({data: data});
-});
-
-
-
-app.get('/api/hash/:key', async (req, res) => {
-    const {key} = req.params;
-
-    let result,data=[];
-    try {
-        result = await client.hgetall(key.toLowerCase())
-        data=[]
-        _.each(result,function(n){
-            data.push((n))
-        })
-    }catch (e) {
-        console.log(e)
-    }
-
-    return res.json({data:data});
-});
-
-app.get('/api/room/:key', async (req, res) => {
-    const {key} = req.params;
-    let result;
-    try{
-        result = await client.get("room_" + key);
-    }catch (e) {
-        console.log(e)
-    }
-
-    return res.json({data:result});
-
-});
+//
+// app.get('/api/:key', async (req, res) => {
+//     const {key} = req.params;
+//     let result,data={};
+//     try {
+//         result =await client.get(key);
+//         data = isJSON(result) ? JSON.parse(result) : result;
+//     }catch (e) {
+//        console.log(e)
+//     }
+//     return res.json({data: data});
+// });
+//
+//
+//
+// app.get('/api/hash/:key', async (req, res) => {
+//     const {key} = req.params;
+//
+//     let result,data=[];
+//     try {
+//         result = await client.hgetall(key.toLowerCase())
+//         data=[]
+//         _.each(result,function(n){
+//             data.push((n))
+//         })
+//     }catch (e) {
+//         console.log(e)
+//     }
+//
+//     return res.json({data:data});
+// });
+//
+// app.get('/api/room/:key', async (req, res) => {
+//     const {key} = req.params;
+//     let result;
+//     try{
+//         result = await client.get("room_" + key);
+//     }catch (e) {
+//         console.log(e)
+//     }
+//
+//     return res.json({data:result});
+//
+// });
 app.get('/api/config/time', async (req, res) => {
 
     const timestamp = Math.floor(Date.now() / 1000)
@@ -170,7 +180,15 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 
-const PORT = process.env.HASH_PORT || 5555;
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-});
+// const PORT = process.env.HASH_PORT || 5555;
+// app.listen(PORT, () => {
+//     console.log(`Server listening on port ${PORT}`);
+// });
+
+
+// const port = parseInt(process.env.HASH_PORT, 10) || 80
+// app.set('port', port)
+// const server = http.createServer(app)
+// server.listen(port)
+
+module.exports=app
