@@ -1,6 +1,9 @@
-require('dotenv').config({
-    path: __dirname + '/../../server.env'
-});
+if (!process.env.docker) {
+    require('dotenv').config({
+        path: __dirname + '/../server.env'
+    });
+}
+
 const ZeroClientProvider = require('web3-provider-engine/zero')
 
 const BotFactory = require("./BotFactory")
@@ -13,30 +16,27 @@ async function main() {
     App.listen(PORT, () => {
         console.log(`Server listening on port ${PORT}`);
     });
-
-    const botFactory = new BotFactory()
-    botFactory.start()
-
+    //事件处理
     const hashDice = new HashDice()
     await hashDice.init()
 
+    //事件监控
+    const botFactory = new BotFactory()
+    botFactory.start()
+
+    //开奖任务
     const hashTask = new HashTask();
     await hashTask.init()
 
     const providerEngine = ZeroClientProvider({
-
         rpcUrl: process.env.RPC_URL,
-
     })
 
+    //区块监控
     providerEngine.on('block', async function (block) {
-
         await hashTask.BlockWatch(block)
     })
 
 }
-
-
-
-//test()
+ 
 main()

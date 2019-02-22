@@ -6,23 +6,25 @@ let app = express();
 let parseArray = process.env.APP_IDS.split(',');
 let dashboardArray = [];
 
+
+console.log(process.env)
 // Parse Server
 parseArray.forEach(appId =>
 {
     dashboardArray.push({
-        'serverURL': `${process.env.SERVER_URL}/app/${appId}`,
-        'masterKey': process.env.MASTER_KEY,
+        'serverURL': `/app/${appId}`,
+        'masterKey': process.env.PARSE_MASTER_KEY,
         'appId': appId,
         'appName': appId
     });
 
     let parseApp = new ParseServer({
-        serverURL: process.env.SERVER_URL,
-        masterKey: process.env.MASTER_KEY,
+        //serverURL: process.env.SERVER_URL,
+        masterKey: process.env.PARSE_MASTER_KEY,
         appId: appId,
         databaseURI: db.buildConnectionUrl(process.env, appId),
         liveQuery: {
-            classNames: ["Rooms", "Orders"] // List of classes to support for query subscriptions
+            classNames: ["Room", "Order"] // List of classes to support for query subscriptions
         }
        // cloud: "./cloud/"+appId,
     });
@@ -47,5 +49,5 @@ app.use('/dashboard/', dashboard);
 // Parse Server plays nicely with the rest of your web routes
 app.get('/', (req, res) => res.status(200).send('Welcome to Parse Server'));
 
-let port = process.env.PORT || 1337;
+let port = process.env.PARSE_PORT || 1337;
 app.listen(port, () => console.log(`Parse Server is running on port ${port}.`));

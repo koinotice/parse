@@ -38,17 +38,18 @@ services:
 
   parse:
     build: ./parse
-
+    container_name: hash-parse
     ports:
     - 7311:1337
     env_file:
-    - parse.env
+    - .env
     volumes:
     - ./parse/cloud:/app/cloud
 
 
   mongo:
     image: 'bitnami/mongodb:latest'
+    container_name: hash-mongo
     ports:
     - "27017:27017"
     environment:
@@ -56,60 +57,77 @@ services:
     - MONGODB_USERNAME=pmker
     - MONGODB_PASSWORD=Zheli123
     - MONGODB_DATABASE=pmker
-#    volumes:
-#    - './data:/bitnami'
+  #    volumes:
+  #    - './data:/bitnami'
 
 
   postgresql:
     image: 'bitnami/postgresql:latest'
+    container_name: hash-postgresql
     ports:
     - '5432:5432'
     environment:
     - POSTGRESQL_USERNAME=pmker
     - POSTGRESQL_PASSWORD=Zheli123
     - POSTGRESQL_DATABASE=pmker
-#    volumes:
-#    - './data:/bitnami'
+  #    volumes:
+  #    - './data:/bitnami'
 
-#  redis:
-#    image: 'bitnami/redis:latest'
-#    ports:
-#    - '7379:6379'
-#    environment:
-#    - REDIS_PASSWORD=Zheli123
+  #  redis:
+  #    image: 'bitnami/redis:latest'
+  #    ports:
+  #    - '7379:6379'
+  #    environment:
+  #    - REDIS_PASSWORD=Zheli123
 
   redis:
-      image: redis:${REDIS_VERSION}
-      ports:
-      - "${REDIS_HOST_PORT}:6379"
-      volumes:
-      - ${REDIS_CONF_FILE}:/etc/redis.conf:ro
-      restart: always
-      entrypoint: ["redis-server", "/etc/redis.conf"]
+    image: redis:${REDIS_VERSION}
+    container_name: hash-redis
+    ports:
+    - "${REDIS_HOST_PORT}:6379"
+    volumes:
+    - ${REDIS_CONF_FILE}:/etc/redis.conf:ro
+    restart: always
+    entrypoint: ["redis-server", "/etc/redis.conf"]
 
-#  rabbitmq:
-#    image: 'bitnami/rabbitmq:latest'
-#    ports:
-#    - 15672:15672
-#    environment:
-#    - RABBITMQ_PASSWORD=my_password
+  #  rabbitmq:
+  #    image: 'bitnami/rabbitmq:latest'
+  #    ports:
+  #    - 15672:15672
+  #    environment:
+  #    - RABBITMQ_PASSWORD=my_password
 
 
 
-#    volumes:
-#    - ./data/redis:/bitnami/redis
+  #    volumes:
+  #    - ./data/redis:/bitnami/redis
   hashapp:
     build: ./app/
+    container_name: hash-app
     #image: hashapp:latest
     volumes:
     - ./app:/app
     - /app/node_modules/
     - ./app/logs:/app/logs
     ports:
-        - '7300:80'
+    - '7300:80'
+    env_file:
+    - .env
     environment:
-    - NODE_ENV=development
-
+    - docker=true
+#  hashapp1:
+#    build: ./
+#    #image: hashapp:latest
+#    volumes:
+#    - .:/app
+#    - /app/node_modules/
+#    - ./logs:/app/logs
+#    ports:
+#    - '7300:80'
+#    env_file:
+#    - ../server.env
+#    environment:
+#    - docker=true
 #  app:
 #    build: ./app
 #    ports:

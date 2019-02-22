@@ -48,7 +48,7 @@ class HashTask {
         that.contract.setProvider(new Web3(provider).currentProvider);
         that.hashContract = await that.contract.at(address)
 
-        logger.info("HashTask", "init")
+        logger.info("HashTask init")
 
 
     }
@@ -56,15 +56,13 @@ class HashTask {
     async BlockWatch(block) {
         const that = this;
 
-// //
         const blockNumber = Number.parseInt(block.number.toString('hex'), 16)
         const blockHash = `0x${block.hash.toString('hex')}`
         let data = {
             number: blockNumber,
             hash: blockHash
         }
-        //client.set(data.number, JSON.stringify(data));
-        console.log(data)
+
 
         client.smembers(data.number, async (err, reply) => {
             if (reply.length != 0) {

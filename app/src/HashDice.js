@@ -22,6 +22,7 @@ const {address, hashabi} = require("./hashDice.json")
 
 const HDWalletProvider = require("truffle-hdwallet-provider")
 
+
 const provider = new HDWalletProvider(WALLET_MNEMONIC, RPC_URL, 0, 5)
 
 const Tcontract = require('truffle-contract');
@@ -52,7 +53,7 @@ class HashDice {
             const ev = JSON.parse(data)
             logger.info('Event %s at %s', ev.event, new Date());
             logger.info('Event params %s  ', ev.returnValues );
-            console.log(ev)
+
             try {
                 that[ev.event](ev.returnValues)
             } catch (e) {

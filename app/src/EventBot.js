@@ -1,21 +1,21 @@
-const {Contract,Block}=require("./Models")
+const {Contract, Block} = require("./Models")
 const Web3 = require('web3')
 const ZeroClientProvider = require('web3-provider-engine/zero')
-const nats = require('nats').connect( process.env.NAT_URL);
+const nats = require('nats').connect(process.env.NAT_URL);
 
-function ns(key,value){
+function ns(key, value) {
     const data = _.isObjectLike(value) ? JSON.stringify(value) : value;
-    client.set('log',data)
-    nats.publish('event.cache.'+key+'.change', JSON.stringify( {data:data}));
+    client.set('log', data)
+    nats.publish('event.cache.' + key + '.change', JSON.stringify({data: data}));
 
 }
+
 /** This will watch for events that have not been processed yet and send a webhook
  */
 class EventForwarder {
     constructor(
         contractAddress,
         contractABI
-
     ) {
         this.contractAddress = contractAddress
         this.contractABI = contractABI
@@ -23,11 +23,25 @@ class EventForwarder {
         this.running = false
         this.cycleStop = false
         this.timer
-        // web3
-        this.web3Provider = ZeroClientProvider({
-            rpcUrl: process.env.PROVIDER_URI
-        })
-        this.web3 = new Web3(process.env.PROVIDER_URI)
+
+        const that = this;
+
+        var provider = new Web3.providers.WebsocketProvider(process.env.PROVIDER_URI);
+        this.web3 = new Web3(provider);
+        provider.on('error', e => {
+            console.error('WS Infura Error', e);
+        });
+
+        provider.on('end', e => {
+            console.log('WS closed');
+            console.log('Attempting to reconnect...');
+            provider = new Web3.providers.WebsocketProvider(process.env.PROVIDER_URI);
+            provider.on('connect', function () {
+                console.log('WSS Reconnected');
+            });
+            that.web3.setProvider(provider);
+            that.start();
+        });
         //this.web3Provider.start()
         // instantiate contract
         this.contractInstance = new this.web3.eth.Contract(this.contractABI, this.contractAddress)
@@ -37,15 +51,53 @@ class EventForwarder {
 
     async _init() {
         // get last processed block
-        const contractData =   await Contract.findOne({ address: this.contractAddress });
+        const contractData = await Contract.findOne({address: this.contractAddress});
 
         this.lastBlock = contractData.lastBlock
+
+
+    }
+
+    async roomsInit() {
+        const that = this
+        const events = await this.contractInstance.getPastEvents(
+            'RoomOpened',
+            {
+                fromBlock: 0,
+                toBlock: "latest"
+            }
+        )
+
+        await Promise.all(events.map(async event => {
+
+            nats.publish(this.contractAddress, JSON.stringify(event));
+
+        }))
+    }
+
+    async ordersInit() {
+        const that = this
+        const events = await this.contractInstance.getPastEvents(
+            'NewBetOrder',
+            {
+                fromBlock: 0,
+                toBlock: "latest"
+            }
+        )
+
+        await Promise.all(events.map(async event => {
+
+            nats.publish(this.contractAddress, JSON.stringify(event));
+             //console.log(event)
+        }))
     }
 
     /** Entry Point
      */
     async start() {
         await this._init()
+        await this.roomsInit()
+        await this.ordersInit()
         // start cycle
         this.checkForEvents()
         // run on a cycle to keep alive
@@ -62,7 +114,7 @@ class EventForwarder {
     }
 
     async fetchEventsCycle() {
-        const that=this;
+        const that = this;
         this.timer = setTimeout(async () => {
             try {
                 await this.checkForEvents()
@@ -89,10 +141,10 @@ class EventForwarder {
                     resolve(result)
                 })
         )
-        console.log(nextBlock,lastBlock)
+        console.log(lastBlock)
         // check for new bid events
         if (nextBlock <= lastBlock) {
-            console.log("0000")
+
             const events = await this.contractInstance.getPastEvents(
                 'allEvents',
                 {
@@ -103,12 +155,12 @@ class EventForwarder {
 
             await Promise.all(events.map(async event => {
 
-                nats.publish(this.contractAddress, JSON.stringify( event));
+                nats.publish(this.contractAddress, JSON.stringify(event));
             }))
-            await Contract.update({ address: this.contractAddress }, { $set: {lastBlock: lastBlock }  }, {})
+            await Contract.update({address: this.contractAddress}, {$set: {lastBlock: lastBlock}}, {})
 
 
-            this.lastBlock = lastBlock
+            //this.lastBlock = lastBlock
         }
     }
 
