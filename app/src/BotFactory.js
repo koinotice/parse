@@ -1,5 +1,6 @@
 const {Contract,Block}=require("./Models")
 const EventBot = require('./EventBot')
+const logger = require('./lib/logger')
 
 class BotFactory {
     constructor() {
@@ -10,7 +11,7 @@ class BotFactory {
 
     async start() {
         const contracts = await Contract.find({})
-        //console.log(contracts)
+       console.log(contracts)
         contracts.map(contract => {
             //console.log(contract.address)
             this.startListening(contract.address,contract.abi)

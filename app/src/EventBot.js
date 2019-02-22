@@ -2,6 +2,7 @@ const {Contract, Block} = require("./Models")
 const Web3 = require('web3')
 const ZeroClientProvider = require('web3-provider-engine/zero')
 const nats = require('nats').connect(process.env.NAT_URL);
+const logger = require('./lib/logger')
 
 function ns(key, value) {
     const data = _.isObjectLike(value) ? JSON.stringify(value) : value;
