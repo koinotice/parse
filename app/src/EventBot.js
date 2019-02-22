@@ -40,7 +40,7 @@ class EventForwarder {
                 console.log('WSS Reconnected');
             });
             that.web3.setProvider(provider);
-            that.start();
+            that.restart();
         });
         //this.web3Provider.start()
         // instantiate contract
@@ -104,6 +104,12 @@ class EventForwarder {
         this.fetchEventsCycle()
         this.running = true
         this.cycle_stop = false
+    }
+    async restart(){
+        logger.error("rpc restart")
+        this.stop()
+        this.checkForEvents()
+        await this.fetchEventsCycle()
     }
 
     stop() {

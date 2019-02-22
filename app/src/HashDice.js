@@ -46,13 +46,13 @@ class HashDice {
 
         const RoundPeriod = await this.contract.GetRoundPeriod.call();
         this.RoundPeriod=RoundPeriod.toNumber()
-        console.log("RoundPeriod",this.RoundPeriod)
+        //console.log("RoundPeriod",this.RoundPeriod)
 
         //console.log(that.contract)
         Nats.subscribe(address, function (data) {
             const ev = JSON.parse(data)
             logger.info('Event %s at %s', ev.event, new Date());
-            logger.info('Event params %s  ', ev.returnValues );
+            logger.info('Event params %s  ', JSON.stringify(ev.returnValues ));
 
             try {
                 that[ev.event](ev.returnValues)
@@ -141,7 +141,7 @@ class HashDice {
 
         await client.sadd(blockHeight, roomId)
 
-        console.log(orderInfo)
+        //console.log(orderInfo)
         try {
             await this.updateRoom(roomId)
             var query = new Parse.Query(Order);
