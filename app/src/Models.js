@@ -1,12 +1,12 @@
 const {Datastore} = require("nedb-async-await");
 
 const Contract = Datastore({
-    filename: './db/contract.json',
+    filename: __dirname+'/db/contract.json',
     autoload: true
 });
 
 const Block = Datastore({
-    filename: './db/block.json',
+    filename: __dirname+'/db/block.json',
     autoload: true
 });
 
