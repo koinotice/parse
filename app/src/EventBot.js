@@ -104,9 +104,12 @@ class EventForwarder {
         this.fetchEventsCycle()
         this.running = true
         this.cycle_stop = false
+
+        logger.info("EventBot start  " )
+
     }
     async restart(){
-        logger.error("rpc restart")
+        logger.error("EventBot rpc restart")
         this.stop()
         this.checkForEvents()
         await this.fetchEventsCycle()

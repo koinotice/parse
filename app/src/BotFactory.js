@@ -15,6 +15,9 @@ class BotFactory {
             //console.log(contract.address)
             this.startListening(contract.address,contract.abi)
         })
+
+        logger.info("BotFactory start  " )
+
     }
 
     async startListening(contractAddress,abi) {

@@ -61,6 +61,8 @@ class HashDice {
             }
             //nats.publish("foo", i++ + "")
         })
+
+        logger.info("HashDice init finish  " )
     }
 
     async updateRoom(roomId) {
