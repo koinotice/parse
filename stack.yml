@@ -1,0 +1,87 @@
+version: '3'
+
+services:
+
+
+
+  postgres:
+    build: "./docker/postgres"
+    restart: "always"
+    ports:
+    - 5432:5432
+    environment:
+      POSTGRES_DB: "pmker"
+      POSTGRES_USER: "pmker"
+      POSTGRES_PASSWORD: "Zheli123"
+  nats_1:
+    image: nats:1.2.0-linux
+    command: -config /etc/nats/nats.conf
+    volumes:
+    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
+
+  nats_2:
+    image: nats:1.2.0-linux
+    command: -config /etc/nats/nats.conf
+
+    volumes:
+    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
+
+  nats_3:
+    image: nats:1.2.0-linux
+    command: -config /etc/nats/nats.conf
+
+    volumes:
+    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
+
+  stan_1:
+    image: nats-streaming:0.10.2-linux
+    command: -config /etc/nats/stan.conf -cluster_bootstrap
+    ports:
+    - "4222"
+
+    volumes:
+    - "./data/nats:/etc/nats/data"
+    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
+
+  stan_2:
+    image: nats-streaming:0.10.2-linux
+    command: -config /etc/nats/stan.conf
+    ports:
+    - "4222"
+    volumes:
+    - "./data/nats:/etc/nats/data"
+    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
+
+  stan_3:
+    image: nats-streaming:0.10.2-linux
+    command: -config /etc/nats/stan.conf
+    ports:
+    - "4222"
+    volumes:
+    - "./data/nats:/etc/nats/data"
+    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
+
+
+#  hashapp:
+#    build: ./app/
+#    container_name: hash-app
+#    #image: hashapp:latest
+#    volumes:
+#    - ./app:/app
+#    - /app/node_modules/
+#    - /hash/logs:/hash/logs
+#    ports:
+#    - '7300:80'
+#    env_file:
+#    - .env
+#    environment:
+#    - docker=true
+
+
+networks:
+  genv-dev:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.3.0.0/24
+

@@ -2,6 +2,7 @@ FROM node
 
 # Create app directory
 RUN mkdir -p /app
+RUN mkdir -p /hash
 WORKDIR /app
 
 # Install app dependencies

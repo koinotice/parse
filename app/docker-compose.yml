@@ -3,18 +3,20 @@ version: '3'
 services:
 
   hashapp1:
-    build: ./
+    build: .
+    container_name: hash-app1
     #image: hashapp:latest
     volumes:
     - .:/app
     - /app/node_modules/
-    - ./logs:/app/logs
+    - /hash/logs:/hash/logs
     ports:
-        - '7300:80'
+    - '7300:80'
     env_file:
-       - ../server.env
+    - ../.env
     environment:
     - docker=true
+
 
 #  app:
 #    build: ./app
@@ -26,9 +28,9 @@ services:
 #    - ./app/src:/usr/src/app/src
 #    - /usr/src/app/node_modules
 networks:
-  genv-dev:
-    driver: bridge
-    ipam:
-      config:
-      - subnet: 172.3.0.0/24
+    genv-dev:
+      driver: bridge
+      ipam:
+        config:
+        - subnet: 172.3.0.0/24
 

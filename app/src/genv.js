@@ -4,20 +4,20 @@ if (!process.env.docker) {
     });
 }
 
-const ZeroClientProvider = require('web3-provider-engine/zero')
+//const ZeroClientProvider = require('web3-provider-engine/zero')
 
-const BotFactory = require("./BotFactory")
-const HashDice = require("./HashDice")
+//const BotFactory = require("./BotFactory")
+//const HashDice = require("./HashDice")
 const HashTask = require("./HashTask")
-const App = require("./server")
+//const App = require("./server")
 
 async function main() {
 
-    
-    //事件监控
-    const botFactory = new BotFactory()
-    botFactory.start()
 
+    //事件监控
+    const hashTask = new HashTask();
+    await hashTask.init()
+    await hashTask.test()
 
 }
 

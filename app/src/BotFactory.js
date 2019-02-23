@@ -11,9 +11,7 @@ class BotFactory {
 
     async start() {
         const contracts = await Contract.find({})
-       console.log(contracts)
         contracts.map(contract => {
-            //console.log(contract.address)
             this.startListening(contract.address,contract.abi)
         })
 
@@ -22,7 +20,7 @@ class BotFactory {
     }
 
     async startListening(contractAddress,abi) {
-        console.log(`(re)starting listener for ${contractAddress}`)
+        logger.info(`Starting listener for ${contractAddress}`)
 
         const botIndex = this.contractIndexes[contractAddress]
         if (botIndex) {

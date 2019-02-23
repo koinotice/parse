@@ -1,50 +1,42 @@
 version: '3'
 
 services:
-  nats:
-    image: nats-hash:1.0
-    build:
-      context: './docker/nats'
-    container_name: hash-nats
-    expose:
-    - 4222
-    - 8222
-    ports:
-    - 4222:4222
-    - 8222:8222
-    restart: always
+  #  nats:
+  #    image: nats-hash:1.0
+  #    build:
+  #      context: './docker/nats'
+  #    container_name: hash-nats
+  #    expose:
+  #    - 4222
+  #    - 8222
+  #    ports:
+  #    - 4222:4222
+  #    - 8222:8222
+  #    restart: always
 
 
-  resgate:
-    image: resgate-hash:1.0
-    build:
-      context: './docker/resgate'
-    container_name: hash-resgate
-    expose:
-    - 8080
-    ports:
-    - 7200:8080
-    restart: always
-    command:
-      -n nats://admin:Zheli123@nats:4222
-    environment:
-    - NODE_ENV=staging
-    - DB_HOST=postgres-lupinemoon
-    - HEMERA_LOG_LEVEL=debug
-    - JAEGER_URL=jaeger
-    - NATS_URL=nats://admin@zheli123@nats:4222
-    - NATS_USER=ruser
-    - NATS_PW=T0pS3cr3t
+  #  resgate:
+  #    image: resgate-hash:1.0
+  #    build:
+  #      context: './docker/resgate'
+  #    container_name: hash-resgate
+  #    expose:
+  #    - 8080
+  #    ports:
+  #    - 7200:8080
+  #    restart: always
+  #    command:
+  #      -n nats://admin:Zheli123@nats:4222
+  #    environment:
+  #    - NODE_ENV=staging
+  #    - DB_HOST=postgres-lupinemoon
+  #    - HEMERA_LOG_LEVEL=debug
+  #    - JAEGER_URL=jaeger
+  #    - NATS_URL=nats://admin@zheli123@nats:4222
+  #    - NATS_USER=ruser
+  #    - NATS_PW=T0pS3cr3t
 
-  parse:
-    build: ./parse
-    container_name: hash-parse
-    ports:
-    - 7311:1337
-    env_file:
-    - .env
-    volumes:
-    - ./parse/cloud:/app/cloud
+
 
 
   mongo:
@@ -60,16 +52,25 @@ services:
   #    volumes:
   #    - './data:/bitnami'
 
-
-  postgresql:
-    image: 'bitnami/postgresql:latest'
-    container_name: hash-postgresql
+  postgres:
+    build: "./docker/postgres"
+    restart: "always"
     ports:
-    - '5432:5432'
+    - 5432:5432
     environment:
-    - POSTGRESQL_USERNAME=pmker
-    - POSTGRESQL_PASSWORD=Zheli123
-    - POSTGRESQL_DATABASE=pmker
+      POSTGRES_DB: "pmker"
+      POSTGRES_USER: "pmker"
+      POSTGRES_PASSWORD: "Zheli123"
+
+  #  postgresql:
+  #    image: 'bitnami/postgresql:latest'
+  #    container_name: hash-postgresql
+  #    ports:
+  #    - '5432:5432'
+  #    environment:
+  #    - POSTGRESQL_USERNAME=pmker
+  #    - POSTGRESQL_PASSWORD=Zheli123
+  #    - POSTGRESQL_DATABASE=pmker
   #    volumes:
   #    - './data:/bitnami'
 
@@ -99,44 +100,122 @@ services:
 
 
 
+  nats:
+    image: nats-streaming:latest
+    restart: always
+    command: -m 8222 --store SQL --sql_driver postgres --sql_source "postgres://pmker:Zheli123@postgres/pmker?sslmode=disable"
+    ports:
+    - "4222:4222"
+    - "8222:8222"
+
+  natsboard:
+    build:
+      context: "./docker/natsboard"
+    ports:
+    - "7400:3000"
+    - "7401:3001"
+
+  parse:
+    build: ./docker/parse
+    container_name: hash-parse
+    ports:
+    - 7311:1337
+    env_file:
+    - .env
+    volumes:
+    - ./parse/cloud:/app/cloud
+
+  aria2:
+    image: aria2:1.0
+    build:
+      context: './docker/aria2'
+    container_name: aria2
+
+    ports:
+    - 7322:80
+    - 6800:6800
+    - 7320:8080
+    restart: always
+
+    #environment:
+    # SECRET=YOUR_SECRET_CODE
+    volumes:
+    - ./data/download:/aria2/downloads
+    - ./data/conf:/aria2/conf
+
+
+
   #    volumes:
   #    - ./data/redis:/bitnami/redis
-  hashapp:
+
+
+
+
+#  nats_1:
+#    image: nats:1.2.0-linux
+#    command: -config /etc/nats/nats.conf
+#    volumes:
+#    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
+#
+#  nats_2:
+#    image: nats:1.2.0-linux
+#    command: -config /etc/nats/nats.conf
+#
+#    volumes:
+#    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
+#
+#  nats_3:
+#    image: nats:1.2.0-linux
+#    command: -config /etc/nats/nats.conf
+#
+#    volumes:
+#    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
+#
+#  stan_1:
+#    image: nats-streaming:0.10.2-linux
+#    command: -config /etc/nats/stan.conf -cluster_bootstrap
+#    ports:
+#    - "4222:4222"
+#    - '8222:8222'
+#    volumes:
+#    - "./data/nats:/etc/nats/data"
+#    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
+#
+#  stan_2:
+#    image: nats-streaming:0.10.2-linux
+#    command: -config /etc/nats/stan.conf
+#    ports:
+#    - "24222:4222"
+#    volumes:
+#    - "./data/nats:/etc/nats/data"
+#    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
+#
+#  stan_3:
+#    image: nats-streaming:0.10.2-linux
+#    command: -config /etc/nats/stan.conf
+#    ports:
+#    - "34222:4222"
+#    volumes:
+#    - "./data/nats:/etc/nats/data"
+#    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
+
+
+  hashdice:
     build: ./app/
     container_name: hash-app
     #image: hashapp:latest
     volumes:
     - ./app:/app
     - /app/node_modules/
-    - ./app/logs:/app/logs
+    - /hash/logs:/hash/logs
     ports:
     - '7300:80'
     env_file:
     - .env
     environment:
     - docker=true
-#  hashapp1:
-#    build: ./
-#    #image: hashapp:latest
-#    volumes:
-#    - .:/app
-#    - /app/node_modules/
-#    - ./logs:/app/logs
-#    ports:
-#    - '7300:80'
-#    env_file:
-#    - ../server.env
-#    environment:
-#    - docker=true
-#  app:
-#    build: ./app
-#    ports:
-#    - 5555:5555
-#    env_file:
-#    - ./parse.env
-#    volumes:
-#    - ./app/src:/usr/src/app/src
-#    - /usr/src/app/node_modules
+
+
 networks:
   genv-dev:
     driver: bridge

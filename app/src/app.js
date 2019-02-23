@@ -3,18 +3,17 @@ if (!process.env.docker) {
         path: __dirname + '/../server.env'
     });
 }
-
 const ZeroClientProvider = require('web3-provider-engine/zero')
-
 const BotFactory = require("./BotFactory")
 const HashDice = require("./HashDice")
 const HashTask = require("./HashTask")
 const App = require("./server")
+const logger = require('./lib/logger')
 
 async function main() {
     const PORT = process.env.HASH_PORT || 80;
     App.listen(PORT, () => {
-        console.log(`Server listening on port ${PORT}`);
+        logger.info(`Hash Server listening on port ${PORT}`);
     });
     //事件处理
     const hashDice = new HashDice()
@@ -38,5 +37,5 @@ async function main() {
     })
 
 }
- 
+
 main()

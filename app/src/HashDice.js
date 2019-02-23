@@ -214,6 +214,14 @@ class HashDice {
 
     }
 
+    async CloseRoundTooLate(ev) {
+        logger.info('CloseRoundTooLate at %s', new Date());
+        //await this.getBetOrder(ev.roomId,  ev.orderId)
+
+    }
+
+
+
 }
 
 

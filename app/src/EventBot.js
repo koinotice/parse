@@ -1,8 +1,9 @@
 const {Contract} = require("./Models")
 const Web3 = require('web3')
-const ZeroClientProvider = require('web3-provider-engine/zero')
 const nats = require('nats').connect(process.env.NAT_URL);
 const logger = require('./lib/logger')
+
+
 
 function ns(key, value) {
     const data = _.isObjectLike(value) ? JSON.stringify(value) : value;
@@ -30,19 +31,20 @@ class EventForwarder {
         var provider = new Web3.providers.WebsocketProvider(process.env.PROVIDER_URI);
         this.web3 = new Web3(provider);
         provider.on('error', e => {
-            console.error('WS Infura Error', e);
+            logger.error('WS Infura Error %s', e);
         });
 
         provider.on('end', e => {
-            console.log('WS closed');
-            console.log('Attempting to reconnect...');
+            logger.log('WS closed');
+            logger.log('Attempting to reconnect...');
             provider = new Web3.providers.WebsocketProvider(process.env.PROVIDER_URI);
             provider.on('connect', function () {
-                console.log('WSS Reconnected');
+                logger.log('WSS Reconnected');
             });
             that.web3.setProvider(provider);
-            that.restart();
+            //that.restart();
         });
+
         //this.web3Provider.start()
         // instantiate contract
         this.contractInstance = new this.web3.eth.Contract(this.contractABI, this.contractAddress)
@@ -74,6 +76,7 @@ class EventForwarder {
             nats.publish(this.contractAddress, JSON.stringify(event));
 
         }))
+
     }
 
     async ordersInit() {
@@ -87,9 +90,7 @@ class EventForwarder {
         )
 
         await Promise.all(events.map(async event => {
-
             nats.publish(this.contractAddress, JSON.stringify(event));
-             //console.log(event)
         }))
     }
 
@@ -137,11 +138,6 @@ class EventForwarder {
         }, 15 * 1000) // every 15 seconds check for new events
     }
 
-    async updateWebhooks(eventWebhooks) {
-        // set new webhook callbacks
-        this.eventWebhooks = eventWebhooks
-    }
-
     async checkForEvents() {
         const nextBlock = this.lastBlock + 1
         const lastBlock = await new Promise(
@@ -151,7 +147,7 @@ class EventForwarder {
                     resolve(result)
                 })
         )
-        console.log(lastBlock)
+        console.log(nextBlock,lastBlock)
         // check for new bid events
         if (nextBlock <= lastBlock) {
 
@@ -164,13 +160,12 @@ class EventForwarder {
             )
 
             await Promise.all(events.map(async event => {
-
                 nats.publish(this.contractAddress, JSON.stringify(event));
             }))
-            await Contract.update({address: this.contractAddress}, {$set: {lastBlock: lastBlock}}, {})
+            // await Contract.update({address: this.contractAddress}, {$set: {lastBlock: lastBlock}}, {})
 
 
-            //this.lastBlock = lastBlock
+            this.lastBlock = lastBlock
         }
     }
 

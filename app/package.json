@@ -31,6 +31,7 @@
     "nedb": "^1.8.0",
     "nedb-async-await": "^0.1.2",
     "node-json-rpc": "^0.0.1",
+    "node-nats-streaming": "^0.0.52",
     "parse": "^2.2.0",
     "redis": "^2.8.0",
     "request": "^2.88.0",

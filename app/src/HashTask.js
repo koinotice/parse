@@ -1,11 +1,7 @@
 const _ = require('lodash');
 const logger = require('./lib/logger')
-
 const eachLimit = require('async/eachLimit')
-
-
 const Web3 = require('web3');
-
 const {
     NAT_URL,
     WALLET_MNEMONIC,
@@ -15,25 +11,17 @@ const {
 const Nats = require('nats').connect(NAT_URL);
 const {client} = require('./lib/redis');
 
-const {address, hashabi} = require("./hashDice.json")
-
-
+const {address} = require("./hashDice.json")
 const HDWalletProvider = require("truffle-hdwallet-provider")
-
-
 const provider = new HDWalletProvider(WALLET_MNEMONIC, RPC_URL, 0, 3)
-
-
 const contract = require('truffle-contract');
-
 const hashdice_artifact = require('./build/contracts/HashDice.json');
-
-
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
+
 class HashTask {
     constructor() {
         this.contract = ""
@@ -47,10 +35,7 @@ class HashTask {
         that.contract = contract(hashdice_artifact);
         that.contract.setProvider(new Web3(provider).currentProvider);
         that.hashContract = await that.contract.at(address)
-
         logger.info("HashTask init")
-
-
     }
 
     async BlockWatch(block) {
@@ -62,26 +47,18 @@ class HashTask {
             number: blockNumber,
             hash: blockHash
         }
-
-
         client.smembers(data.number, async (err, reply) => {
             if (reply.length != 0) {
-
                 eachLimit(reply, 1, async (n) => {
                     await that.CloseBetOrders(n)
-
-
                 }, function (error) {
-
                     if (error) {
                         console.log(error)
                     } else {
                         console.log("ok")
                     }
                 })
-
             }
-
         });
 
     }
@@ -92,8 +69,8 @@ class HashTask {
         //const hashContract = await that.contract.at(address)
         // console.log(provider)
         const accounts = provider.getAddresses()
-        const account=accounts[getRandomInt(0,accounts.length)]
-        console.log(accounts, account,DEPLOYMENT_GAS_LIMIT)
+        const account = accounts[getRandomInt(0, accounts.length)]
+        console.log(accounts, account, DEPLOYMENT_GAS_LIMIT)
 
         const order = await this.hashContract.CloseBetOrders(roomId, {from: account, gas: DEPLOYMENT_GAS_LIMIT});
 
@@ -107,15 +84,32 @@ class HashTask {
             }
             if (order.receipt.status == true) {
                 await Nats.publish(address, JSON.stringify(event))
-                logger.info("HashTask success blockNumber %s roomId %s", order.receipt.blockNumber + 2,roomId)
+                logger.info("HashTask success blockNumber %s roomId %s", order.receipt.blockNumber + 2, roomId)
             } else {
                 //如果操作失败，2个区块后重试
                 await client.sadd(order.receipt.blockNumber + 2, roomId);
-                logger.error("HashTask fail blockNumber %s roomId %s", order.receipt.blockNumber + 2,roomId)
+                logger.error("HashTask fail blockNumber %s roomId %s", order.receipt.blockNumber + 2, roomId)
             }
         }
 
-        console.log("order close", order)
+    }
+
+
+    async test() {
+
+        //const hashContract = await that.contract.at(address)
+        // console.log(provider)
+        const accounts = provider.getAddresses()
+        const account = accounts[getRandomInt(0, accounts.length)]
+        console.log(accounts, account, DEPLOYMENT_GAS_LIMIT)
+
+        const order = await this.hashContract.SubmitBetOrder(1, 0, "0x1", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], {
+            from: accounts[0],
+            gas: DEPLOYMENT_GAS_LIMIT
+        });
+
+
+        console.log("order test", order)
 
 
     }
