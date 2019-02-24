@@ -11,8 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aria2": "^4.0.3",
     "async": "^2.6.1",
     "async-redis": "^1.1.5",
+    "axios": "^0.18.0",
     "bip39": "^2.5.0",
     "body-parser": "^1.18.3",
     "dotenv": "^6.2.0",
@@ -35,6 +37,7 @@
     "parse": "^2.2.0",
     "redis": "^2.8.0",
     "request": "^2.88.0",
+    "resclient": "^2.0.2",
     "truffle-contract": "^4.0.2",
     "truffle-hdwallet-provider": "^1.0.2",
     "truffle-privatekey-provider": "^1.0.0",

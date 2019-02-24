@@ -8,7 +8,7 @@ const BotFactory = require("./BotFactory")
 const HashDice = require("./HashDice")
 const HashTask = require("./HashTask")
 const App = require("./server")
-const logger = require('./lib/logger')
+const logger = require('./lib/logger')("HashApp")
 
 async function main() {
     const PORT = process.env.HASH_PORT || 80;
@@ -26,6 +26,7 @@ async function main() {
     //开奖任务
     const hashTask = new HashTask();
     await hashTask.init()
+    await hashTask.websocket()
 
     const providerEngine = ZeroClientProvider({
         rpcUrl: process.env.RPC_URL,

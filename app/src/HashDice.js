@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const logger = require('./lib/logger')
+const logger = require('./lib/logger')("HashDice")
 
 const Web3 = require('web3');
 
@@ -10,6 +10,7 @@ const eachLimit = require('async/eachLimit')
 const Room = Parse.Object.extend("Room");
 const Order = Parse.Object.extend("Order");
 
+const moment = require("moment")
 const {
     NAT_URL,
     WALLET_MNEMONIC,
@@ -32,7 +33,7 @@ const hashdice_artifact = require('./build/contracts/HashDice.json');
 class HashDice {
     constructor() {
         this.contract = ""
-        this.RoundPeriod=10
+        this.RoundPeriod = 10
     }
 
     async init() {
@@ -42,17 +43,17 @@ class HashDice {
         const contract = Tcontract(hashdice_artifact);
 
         contract.setProvider(new Web3(provider).currentProvider);
-        that.contract =  await contract.at(address)
+        that.contract = await contract.at(address)
 
         const RoundPeriod = await this.contract.GetRoundPeriod.call();
-        this.RoundPeriod=RoundPeriod.toNumber()
+        this.RoundPeriod = RoundPeriod.toNumber()
         //console.log("RoundPeriod",this.RoundPeriod)
 
         //console.log(that.contract)
         Nats.subscribe(address, function (data) {
             const ev = JSON.parse(data)
-            logger.info('Event %s at %s', ev.event, new Date());
-            logger.info('Event params %s  ', JSON.stringify(ev.returnValues ));
+            logger.info('Event %s at %s', ev.event, moment().format());
+            logger.info('Event params %s  ', JSON.stringify(ev.returnValues));
 
             try {
                 that[ev.event](ev.returnValues)
@@ -62,14 +63,14 @@ class HashDice {
             //nats.publish("foo", i++ + "")
         })
 
-        logger.info("HashDice init finish  " )
+        logger.info("HashDice init finish  ")
     }
 
     async updateRoom(roomId) {
         let room = await this.contract.GetRoomInfo.call(roomId);
 
         const roomInfo = {
-            id: roomId,
+            roomId: parseInt(roomId),
             creator: room[0].toLowerCase(),
             erc20Addr: room[1],
             symbol: room[2],
@@ -77,8 +78,8 @@ class HashDice {
             nominator: room[4].toString(10),
             denominator: room[5].toString(10),
             active: room[6],
-            currentOrderId:room[7],
-            lastClosedOrderId:room[8],
+            currentOrderId: room[7],
+            lastClosedOrderId: room[8],
             currentMaxCompensate: room[9].toString(10),
             lastLockedValue: room[10].toString(10),
         }
@@ -93,16 +94,20 @@ class HashDice {
 
             if (room == undefined) {
                 room = new Room();
-                room.set("roomId", parseInt(roomId));
+
             }
-            delete roomInfo.id
+
             room.set(roomInfo)
             await room.save()
 
         } catch (e) {
             console.log(e)
         }
-        logger.info("Room update room %s " ,roomId)
+
+        Nats.publish('event.hash.rooms.change', JSON.stringify({message: JSON.stringify(roomInfo)}));
+
+       // Nats.publish('event.hash.rooms.change', JSON.stringify({message: roomInfo}));
+        logger.info("Room update room %s ", roomId)
 
     }
 
@@ -131,7 +136,7 @@ class HashDice {
         //     order.closed, order.betValue);
         const orderInfo = {
             owner: order[0].toLowerCase(),
-            startBlock:order[1].toNumber(),
+            startBlock: order[1].toNumber(),
             totalValue: order[2].toString(10),
             gain: order[3].toString(10),
             betType: "0x" + order[4].toString(16),
@@ -176,50 +181,50 @@ class HashDice {
 
 
     async RoomOpened(ev) {
-        logger.info('RoomOpened at %s', new Date());
+        logger.info('RoomOpened at %s', moment().format());
 
         await this.updateRoom(ev.id)
 
     }
+
     async CloseBetOrders(ev) {
-        logger.info('CloseBetOrders at %s', new Date());
+        logger.info('CloseBetOrders at %s', moment().format());
         await this.updateRoom(ev.roomId)
     }
 
 
     async NewBetOrder(ev) {
-        logger.info('NewBetOrder at %s', new Date());
-        await this.getBetOrder(ev.roomId,  ev.orderId)
+        logger.info('NewBetOrder at %s', moment().format());
+        await this.getBetOrder(ev.roomId, ev.orderId)
     }
 
     async Deposited(ev) {
-        logger.info('Deposited at %s', new Date());
+        logger.info('Deposited at %s', moment().format());
         await this.updateRoom(ev.roomId)
     }
 
     async Withdrawed(ev) {
-        logger.info('Withdrawed at %s', new Date());
+        logger.info('Withdrawed at %s', moment().format());
         await this.updateRoom(ev.roomId)
     }
 
     async RoomClosed(ev) {
-        logger.info('RoomClosed at %s', new Date());
+        logger.info('RoomClosed at %s', moment().format());
         await this.updateRoom(ev.roomId)
         console.log("Deposited")
     }
 
     async PayBetOwner(ev) {
-        logger.info('PayBetOwner at %s', new Date());
-        await this.getBetOrder(ev.roomId,  ev.orderId)
+        logger.info('PayBetOwner at %s', moment().format());
+        await this.getBetOrder(ev.roomId, ev.orderId)
 
     }
 
     async CloseRoundTooLate(ev) {
-        logger.info('CloseRoundTooLate at %s', new Date());
+        logger.info('CloseRoundTooLate at %s', moment().format());
         //await this.getBetOrder(ev.roomId,  ev.orderId)
 
     }
-
 
 
 }

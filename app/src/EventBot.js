@@ -1,7 +1,7 @@
 const {Contract} = require("./Models")
 const Web3 = require('web3')
 const nats = require('nats').connect(process.env.NAT_URL);
-const logger = require('./lib/logger')
+const logger = require('./lib/logger')("event")
 
 
 

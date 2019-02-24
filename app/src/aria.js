@@ -8,16 +8,16 @@ if (!process.env.docker) {
 
 //const BotFactory = require("./BotFactory")
 //const HashDice = require("./HashDice")
-const HashTask = require("./HashTest")
+const Aria2 = require("./Aria2")
 //const App = require("./server")
 
 async function main() {
 
 
     //事件监控
-    const hashTask = new HashTask();
-    await hashTask.init()
-    await hashTask.websocket()
+    const aria2 = new Aria2();
+    await aria2.init()
+    await aria2.test()
 
 }
 

@@ -7,12 +7,13 @@ WORKDIR /app
 
 # Install app dependencies
 COPY package.json /app
-#COPY yarn.lock /app
+COPY yarn.lock /app
 RUN yarn install
-
+RUN npm install pm2 -g
 # Bundle app source
 COPY . /app
 #RUN yarn build
 
 EXPOSE 80
-CMD [ "yarn", "start" ]
+CMD ["pm2-runtime", "./ecosystem.config.js"]
+

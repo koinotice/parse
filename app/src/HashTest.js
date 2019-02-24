@@ -1,5 +1,12 @@
 const _ = require('lodash');
-const logger = require('./lib/logger')("HashTask")
+ const winston = require('winston')
+
+const logger = winston.createLogger({
+    transports: [
+        new winston.transports.Console(),
+        new winston.transports.File({ filename: 'combined.log' })
+    ]
+});
 const eachLimit = require('async/eachLimit')
 const Web3 = require('web3');
 const {
@@ -93,25 +100,7 @@ class HashTask {
         }
 
     }
-    async websocket(){
 
-        const nats=Nats
-        const room={ message: JSON.stringify([]) }
-        nats.subscribe('get.hash.rooms', function(req, reply) {
-            nats.publish(reply, JSON.stringify({ result: { model: room }}));
-        });
-
-// Access listener. Everyone gets read access and access to call the set-method
-        nats.subscribe('access.hash.rooms', (req, reply) => {
-            nats.publish(reply, JSON.stringify({ result: { get: true }}));
-        });
-
-        nats.publish('system.reset', JSON.stringify({ resources: [ 'hash.>' ]}));
-
-        logger.info("websocket rooms")
-
-
-    }
 
     async test() {
 
@@ -128,6 +117,28 @@ class HashTask {
 
 
         console.log("order test", order)
+
+
+    }
+    async websocket(){
+
+        const nats=Nats
+        const room={ message: "" }
+        nats.subscribe('get.hash.rooms', function(req, reply) {
+            nats.publish(reply, JSON.stringify({ result: { model: room }}));
+        });
+
+// Access listener. Everyone gets read access and access to call the set-method
+        nats.subscribe('access.hash.rooms', (req, reply) => {
+            nats.publish(reply, JSON.stringify({ result: { get: true }}));
+        });
+
+        nats.publish('system.reset', JSON.stringify({ resources: [ 'hash.>' ]}));
+       var i=0
+        setInterval(function(){
+            Nats.publish('event.hash.rooms.change', JSON.stringify({message: "asdfsdf"+i++}));
+
+        },1000)
 
 
     }

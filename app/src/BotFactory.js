@@ -1,6 +1,6 @@
 const {Contract,Block}=require("./Models")
 const EventBot = require('./EventBot')
-const logger = require('./lib/logger')
+const logger = require('./lib/logger')("bot")
 
 class BotFactory {
     constructor() {
