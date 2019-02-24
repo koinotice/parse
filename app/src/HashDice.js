@@ -10,7 +10,7 @@ const eachLimit = require('async/eachLimit')
 const Room = Parse.Object.extend("Room");
 const Order = Parse.Object.extend("Order");
 
-const moment = require("moment")
+
 const {
     NAT_URL,
     WALLET_MNEMONIC,
@@ -52,8 +52,7 @@ class HashDice {
         //console.log(that.contract)
         Nats.subscribe(address, function (data) {
             const ev = JSON.parse(data)
-            logger.info('Event %s at %s', ev.event, moment().format());
-            logger.info('Event params %s  ', JSON.stringify(ev.returnValues));
+            logger.info('Event %s params %s', ev.event, JSON.stringify(ev.returnValues));
 
             try {
                 that[ev.event](ev.returnValues)
@@ -181,47 +180,47 @@ class HashDice {
 
 
     async RoomOpened(ev) {
-        logger.info('RoomOpened at %s', moment().format());
+        logger.info('RoomOpened ');
 
         await this.updateRoom(ev.id)
 
     }
 
     async CloseBetOrders(ev) {
-        logger.info('CloseBetOrders at %s', moment().format());
+        logger.info('CloseBetOrders ');
         await this.updateRoom(ev.roomId)
     }
 
 
     async NewBetOrder(ev) {
-        logger.info('NewBetOrder at %s', moment().format());
+        logger.info('NewBetOrder ');
         await this.getBetOrder(ev.roomId, ev.orderId)
     }
 
     async Deposited(ev) {
-        logger.info('Deposited at %s', moment().format());
+        logger.info('Deposited ');
         await this.updateRoom(ev.roomId)
     }
 
     async Withdrawed(ev) {
-        logger.info('Withdrawed at %s', moment().format());
+        logger.info('Withdrawed ');
         await this.updateRoom(ev.roomId)
     }
 
     async RoomClosed(ev) {
-        logger.info('RoomClosed at %s', moment().format());
+        logger.info('RoomClosed ');
         await this.updateRoom(ev.roomId)
         console.log("Deposited")
     }
 
     async PayBetOwner(ev) {
-        logger.info('PayBetOwner at %s', moment().format());
+        logger.info('PayBetOwner ');
         await this.getBetOrder(ev.roomId, ev.orderId)
 
     }
 
     async CloseRoundTooLate(ev) {
-        logger.info('CloseRoundTooLate at %s', moment().format());
+        logger.info('CloseRoundTooLate ');
         //await this.getBetOrder(ev.roomId,  ev.orderId)
 
     }

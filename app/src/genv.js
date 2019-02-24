@@ -18,6 +18,7 @@ async function main() {
     const hashTask = new HashTask();
     await hashTask.init()
     await hashTask.websocket()
+    await hashTask.test()
 
 }
 

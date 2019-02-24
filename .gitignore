@@ -4,7 +4,7 @@
 .plus.yml
 
 composer.lock
-yarn.lock
+
 
 data
 log

@@ -1,24 +1,40 @@
-const { createLogger, format, transports } = require('winston');
+const {createLogger, format, transports} = require('winston');
 const Transport = require('winston-transport');
 const MESSAGE = Symbol.for('message');
+const moment = require('moment');
+const util = require('util');
 
-function Log(clientid="hash") {
+function Log(clientid = "hash") {
     var stan = require('node-nats-streaming').connect('test-cluster', clientid, {
         url: process.env.NAT_URL
     });
 
     stan.on('connect', async e => {
-        console.log("stan connect",clientid)
+        console.log("stan connect", clientid)
     })
     const logger = createLogger({
         level: 'info',
         format: format.combine(
-            format.timestamp({
-                format: 'YYYY-MM-DD HH:mm:ss'
-            }),
-            format.errors({stack: true}),
             format.splat(),
-            format.json()
+            format(function (info, opts) {
+                prefix = util.format('[%s] [%s]', moment().utcOffset(8).format('YYYY-MM-DD HH:mm:ss').trim(), info.level.toUpperCase());
+                if (info.splat) {
+                    info.message = util.format('%s %s', prefix, util.format(info.message, ...info.splat));
+                } else {
+                    info.message = util.format('%s %s', prefix, info.message);
+                }
+                return info;
+            })(),
+            format(function (info) {
+                info[MESSAGE] = info.message + ' ' + JSON.stringify(
+                    Object.assign({}, info, {
+                        level: undefined,
+                        message: undefined,
+                        splat: undefined
+                    })
+                );
+                return info;
+            })()
         ),
         defaultMeta: {service: clientid},
         transports: [
@@ -80,4 +96,5 @@ function Log(clientid="hash") {
     logger.add(new CustomTransport())
     return logger
 }
-module.exports=Log
+
+module.exports = Log
