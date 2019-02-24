@@ -29,6 +29,13 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
+
+const {Parse} = require('./lib/parse');
+
+const Room = Parse.Object.extend("Room");
+const Order = Parse.Object.extend("Order");
+const Token =Parse.Object.extend("Token")
+
 class HashTask {
     constructor() {
         this.contract = ""
@@ -142,6 +149,54 @@ class HashTask {
 
 
     }
+    async parseToken(){
+        const tokens=require("./tokens.json")
+
+        var query = new Parse.Query(Token);
+
+        
+        eachLimit(tokens,1,async function(token){
+            console.log(token.address.toLowerCase().trim())
+
+
+            token.address=token.address.toLowerCase().trim()
+
+            console.log(token)
+            query.equalTo('address', token.address);
+            let room = await query.first()
+            console.log(token.address.trim(),room)
+
+            if (room == undefined) {
+                room = new Token();
+            }
+            token.hot=false
+            token.count=0
+            room.set(token)
+            await room.save()
+        })
+
+    }
+
+    async updateToken(roomId) {
+
+        try {
+
+            var query = new Parse.Query(Room);
+            query.equalTo('roomId', parseInt(roomId));
+            query.include("token");
+            let room = await query.first()
+            const token=room.get("token");
+            token.increment("count")
+            await token.save()
+            logger.info("Token update count",JSON.stringify(room.get("token").toJSON()))
+        } catch (e) {
+            console.log(e)
+        }
+
+
+
+    }
+
 
 
 }

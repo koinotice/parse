@@ -16,6 +16,8 @@ const HDWalletProvider = require("truffle-hdwallet-provider")
 const provider = new HDWalletProvider(WALLET_MNEMONIC, RPC_URL, 0, 3)
 const contract = require('truffle-contract');
 const hashdice_artifact = require('./build/contracts/HashDice.json');
+
+
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -112,6 +114,9 @@ class HashTask {
 
 
     }
+
+
+
 
     async test() {
 

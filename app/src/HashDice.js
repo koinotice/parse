@@ -9,6 +9,7 @@ const eachLimit = require('async/eachLimit')
 
 const Room = Parse.Object.extend("Room");
 const Order = Parse.Object.extend("Order");
+const Token =Parse.Object.extend("Token")
 
 
 const {
@@ -71,7 +72,7 @@ class HashDice {
         const roomInfo = {
             roomId: parseInt(roomId),
             creator: room[0].toLowerCase(),
-            erc20Addr: room[1],
+            erc20Addr: room[1].toLowerCase(),
             symbol: room[2],
             name: room[3],
             nominator: room[4].toString(10),
@@ -87,6 +88,9 @@ class HashDice {
         // client.hset(roomInfo.creator.toLowerCase() + "_room", roomId, (roomInfo));
         client.set("room_" + roomInfo.name, 1)
         try {
+
+
+
             var query = new Parse.Query(Room);
             query.equalTo('roomId', parseInt(roomId));
             let room = await query.first()
@@ -94,7 +98,16 @@ class HashDice {
             if (room == undefined) {
                 room = new Room();
 
+                var queryToken = new Parse.Query(Token)
+                queryToken.equalTo('address', roomInfo.erc20Addr);
+                let token = await queryToken.first()
+                room.set("token", token);
+
             }
+            var queryToken = new Parse.Query(Token)
+            queryToken.equalTo('address', roomInfo.erc20Addr);
+            let token = await queryToken.first()
+            room.set("token", token);
 
             room.set(roomInfo)
             await room.save()
@@ -109,24 +122,24 @@ class HashDice {
         logger.info("Room update room %s ", roomId)
 
     }
+    async updateToken(roomId) {
 
-    async updateBetOrder(room, round, orderNum) {
-        //let order = await app.hashdice.GetBetOrder.call(room,round,id);
-        var data = Array.from(new Array(orderNum), (val, index) => index + 1);
+        try {
 
-        const that = this;
-        eachLimit(data, 1, async (n) => {
-            await that.getBetOrder(room, round, n)
-            console.log(n)
-        }, function (error) {
+            var query = new Parse.Query(Room);
+            query.equalTo('roomId', parseInt(roomId));
+            query.include("token");
+            let room = await query.first()
+            const token=room.get("token");
+            token.increment("count")
+            await token.save()
+            logger.info("Token update count %s",JSON.stringify(room.get("token").toJSON()))
+        } catch (e) {
+            logger.error(e)
+        }
 
-            if (error) {
-                console.log(error)
-            } else {
-                console.log("ok")
-            }
-        })
     }
+
 
 
     async getBetOrder(roomId, orderId) {
@@ -183,6 +196,8 @@ class HashDice {
         logger.info('RoomOpened ');
 
         await this.updateRoom(ev.id)
+
+        await this.updateToken(ev.id)
 
     }
 

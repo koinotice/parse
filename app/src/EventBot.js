@@ -2,7 +2,13 @@ const {Contract} = require("./Models")
 const Web3 = require('web3')
 const nats = require('nats').connect(process.env.NAT_URL);
 const logger = require('./lib/logger')("event")
+const eachLimit = require('async/eachLimit')
 
+const {Parse} = require('./lib/parse');
+
+const Room = Parse.Object.extend("Room");
+const Order = Parse.Object.extend("Order");
+const Token = Parse.Object.extend("Token")
 
 
 function ns(key, value) {
@@ -94,12 +100,43 @@ class EventForwarder {
         }))
     }
 
+    async parseToken() {
+        const tokens = require("./tokens.json")
+
+        var query = new Parse.Query(Token);
+
+
+        eachLimit(tokens, 1, async function (token) {
+            console.log(token.address.toLowerCase().trim())
+
+
+            token.address = token.address.toLowerCase().trim()
+
+            console.log(token)
+            query.equalTo('address', token.address);
+            let room = await query.first()
+            console.log(token.address.trim(), room)
+
+            if (room == undefined) {
+                room = new Token();
+            }
+            token.hot = false
+            token.count = 0
+            room.set(token)
+            await room.save()
+        })
+
+    }
+
     /** Entry Point
      */
     async start() {
         await this._init()
+        //重置数据库
+        await this.parseToken()
         await this.roomsInit()
         await this.ordersInit()
+
         // start cycle
         this.checkForEvents()
         // run on a cycle to keep alive
@@ -107,10 +144,11 @@ class EventForwarder {
         this.running = true
         this.cycle_stop = false
 
-        logger.info("EventBot start  " )
+        logger.info("EventBot start  ")
 
     }
-    async restart(){
+
+    async restart() {
         logger.error("EventBot rpc restart")
         this.stop()
         this.checkForEvents()
@@ -147,7 +185,7 @@ class EventForwarder {
                     resolve(result)
                 })
         )
-        console.log(nextBlock,lastBlock)
+        console.log(nextBlock, lastBlock)
         // check for new bid events
         if (nextBlock <= lastBlock) {
 

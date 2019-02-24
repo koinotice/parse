@@ -15,6 +15,10 @@ async function main() {
     App.listen(PORT, () => {
         logger.info(`Hash Server listening on port ${PORT}`);
     });
+
+
+
+
     //事件处理
     const hashDice = new HashDice()
     await hashDice.init()

@@ -26,11 +26,21 @@ const {Parse} = require('./lib/parse');
 
 const Room = Parse.Object.extend("Room");
 const Order = Parse.Object.extend("Order");
+const Token = Parse.Object.extend("Token");
 
+app.get('/api/tokens', async (req, res) => {
+
+    const query = new Parse.Query(Token);
+
+    query.ascending('symbol');// 先进先出，正序排列
+    // app.logge.info(limit)
+    const data= await query.find()
+    return res.json({data: data});
+});
 
 app.get('/api/rooms', async (req, res) => {
 
-    let {page,limit,owner,roomId,name} = req.query;
+    let {page,limit,owner,roomId,name,address,tokenId,desc} = req.query;
 
 
     page = parseInt(page) || 1;
@@ -55,9 +65,24 @@ app.get('/api/rooms', async (req, res) => {
         query.equalTo('name', name);
     }
 
+    if(tokenId){
+        var token = new Token();
+        token.id = tokenId;
+        query.equalTo("token", token);
+    }
+
+    if(address){
+        query.equalTo('erc20Addr',  address.toLowerCase().trim());
+    }
+
     query.limit(limit);
     query.skip(limit * (page - 1));
-    query.descending('createdAt');// 先进先出，正序排列
+    if(!desc){
+       desc= "createdAt"
+    }else{
+        desc="currentOrderId"
+    }
+    query.descending(desc);// 先进先出，正序排列
     // app.logge.info(limit)
     const data= await query.find()
     return res.json({data: data});
@@ -159,11 +184,11 @@ app.get('/api/config/time', async (req, res) => {
     return res.json({time: timestamp});
 });
 
-app.get('/api/config/token', async (req, res) => {
-
-    const tokens = require("./tokens.json")
-    return res.json(tokens);
-});
+// app.get('/api/config/token', async (req, res) => {
+//
+//     const tokens = require("./tokens.json")
+//     return res.json(tokens);
+// });
 
 app.get('/api/config/contract', async (req, res) => {
 

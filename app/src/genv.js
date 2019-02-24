@@ -17,8 +17,12 @@ async function main() {
     //事件监控
     const hashTask = new HashTask();
     await hashTask.init()
-    await hashTask.websocket()
-    await hashTask.test()
+    // await hashTask.websocket()
+    // await hashTask.test()
+
+
+    //await hashTask.updateToken(1)
+    await hashTask.parseToken()
 
 }
 
