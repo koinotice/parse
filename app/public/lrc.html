@@ -18,7 +18,7 @@
     <meta name="theme-color" content="#007aff">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
-    <title>Lrc持仓分红计算</title>
+    <title>LRC长期锁仓收益查询</title>
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -26,7 +26,12 @@
 
     <!-- built styles file will be auto injected -->
 </head>
-
+<style>
+    .van-field__label {
+        max-width: 120px;
+        padding-top: 3px;
+    }
+</style>
 <body>
 
 <div id="app">
@@ -39,31 +44,34 @@
 
         </van-cell>
         <van-cell>
-            <a href="https://blogs.loopring.org/longterm-incentive-plan/" target="_blank">关于路印长期锁仓计划的说明</a>
+            <a href="https://blogs.loopring.org/longterm-incentive-plan/" target="_blank">关于路印长期锁仓计划的说明 > </a>
         </van-cell>
-        <van-cell>
-            <van-cell-group>
-                <van-field
-                        v-model="amount"
-                        center
-                        clearable
-                        label="持仓数量"
-                        @focus="success=false"
-                        type="number"
 
-                        loading-text="计算中"
-                        placeholder="0"
-                >
-                    <van-button slot="button"   size="small" @click="getBonus" type="primary" size="large">计算 </van-button>
-                </van-field>
-            </van-cell-group>
+        <van-cell>
+            <a href="https://blogs.loopring.org/locking-plan/" target="_blank"> 路印协议锁仓计划的解锁时间表 > </a>
         </van-cell>
+        <div class="van-cell-group van-hairline--top-bottom"><div class="van-cell van-cell--required van-field"><div class="van-cell__title van-field__label"><span>锁仓数量(LRC):</span></div><div class="van-cell__value"><div class="van-field__body"><input type="number" placeholder="0" class="van-field__control" v-model="amount" @focus="success=false"><div class="van-field__button">LRC<button class="van-button van-button--primary van-button--small" @click="getBonus"><span class="van-button__text">计算 </span></button></div></div></div></div></div>
+        <!--<van-cell-group>-->
+
+            <!--<van-field-->
+                    <!--v-model="amount"-->
+                    <!--required-->
+                    <!--clearable-->
+                    <!--label="锁仓数量(LRC):"-->
+                    <!--placeholder="0"-->
+                    <!--@focus="success=false"-->
+                    <!--type="number"-->
+
+            <!--/>LRC<van-button slot="button"   size="small" @click="getBonus" type="primary" size="large">计算 </van-button>-->
+                <!--</van-field>-->
+
+        <!--</van-cell-group>-->
 
         <van-cell v-show="success">
-            <van-col span="10">锁仓数量：{{ amount }}</van-col>
+            <van-col span="14">锁仓数量：{{ amount }}</van-col>
             <van-col span="14">解锁奖励：{{ bonus }}</van-col>
             <van-col span="14">赎回数量：{{ count }}</van-col>
-            <van-col span="14">回报率：{{ rate }}</van-col>
+            <van-col span="14">回&nbsp;报&nbsp; 率：{{ rate }}</van-col>
         </van-cell>
         <van-cell v-show="load">
             计算中……
@@ -84,7 +92,7 @@
 <script>
     const ajax = axios.create({
 
-        baseURL: '',
+        baseURL: 'http://hash.pmker.com:7300',
         headers:{
             'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'
         },
