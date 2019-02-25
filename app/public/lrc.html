@@ -185,20 +185,24 @@
     }
 
     .van-field__label {
-        max-width: 120px;
-
+        max-width: 105px;
+        padding-top: 3px;
     }
 
     .van-cell__value--alone {
         color: #323233;
         text-align: left;
-        font-weight: bold;
+
+    }
+
+    [v-cloak] {
+        display: none;
     }
 
 </style>
 <body>
 
-<div id="app">
+<div id="app" v-cloak>
 
 
     <van-cell-group>
@@ -207,11 +211,11 @@
 
         </van-cell>
         <van-cell>
-            <a href="https://blogs.loopring.org/longterm-incentive-plan/" target="_blank">关于路印长期锁仓计划的说明 > </a>
+            <a href="https://blogs.loopring.org/longterm-incentive-plan/" target="_blank">>关于路印长期锁仓计划的说明  </a>
         </van-cell>
 
         <van-cell>
-            <a href="https://blogs.loopring.org/locking-plan/" target="_blank"> 路印协议锁仓计划的解锁时间表 > </a>
+            <a href="https://blogs.loopring.org/locking-plan/" target="_blank">>路印协议锁仓计划的解锁时间表 </a>
         </van-cell>
 
         <van-cell-group>
@@ -232,10 +236,10 @@
         </van-cell-group>
 
         <van-cell v-show="success">
-            <van-col span="14">锁仓数量：{{ amount }} LRC</van-col>
-            <van-col span="14">解锁奖励：{{ bonus }} LRC</van-col>
-            <van-col span="14">赎回数量：{{ count }} LRC</van-col>
-            <van-col span="14">回&nbsp;报&nbsp; 率：{{ rate }}</van-col>
+            <van-col span="14">锁仓数量：<b>{{ amount }}</b> LRC</van-col>
+            <van-col span="14">解锁奖励：<b>{{ bonus }}</b> LRC</van-col>
+            <van-col span="14">赎回数量：<b>{{ count }}</b> LRC</van-col>
+            <van-col span="14">回&nbsp; 报&nbsp; 率：<b>{{ rate }}</b></van-col>
         </van-cell>
         <van-cell v-show="load">
             计算中……
@@ -256,7 +260,7 @@
 <script>
     const ajax = axios.create({
 
-        baseURL: '',
+        baseURL: 'http://hash.pmker.com:7300',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
         },
