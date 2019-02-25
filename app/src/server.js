@@ -195,6 +195,113 @@ app.get('/api/config/contract', async (req, res) => {
     const hash = require("./hashDice.json")
     return res.json(hash);
 });
+
+const Big = require('bignumber.js');
+const BN = require("bn.js");
+
+function dec(balance) {
+    return new Big(10).pow(Number(18)).times(balance).toString(10)
+}
+
+function toNumber(mixed) {
+    if (typeof mixed === 'number') {
+        return mixed
+    }
+
+    if (mixed instanceof Big || mixed instanceof BN) {
+        return mixed.toNumber()
+    }
+
+    if (typeof mixed === 'string') {
+        return Number(mixed)
+    }
+
+    throw new Error('Unsupported type')
+}
+
+const formatLength = (value) => {
+    value = Number(value)
+    // fix bug: value == string
+    if (value && typeof value === 'number') {
+    } else {
+        value = 0
+    }
+    if (value > 1000) {
+        return value.toFixed(2)
+    }
+    if (value <= 1000 && value >= 1) {
+        return value.toFixed(2)
+    }
+    if (value < 1 && value >= 0.001) {
+        return value.toFixed(5)
+    }
+    if (value < 0.001 & value > 0) {
+        return value.toFixed(8)
+    }
+    if (value === 0) {
+        return 0.00
+    }
+}
+
+function getAmount(amount) {
+    let number
+    if (amount) {
+        number = (toNumber(amount) / Number('1e' + 18)).toFixed(4)
+    } else {
+        number = 0
+    }
+    return formatLength(number)
+
+}
+app.get('/api/lrc',async (req,res)=>{
+
+
+
+    const Web3 = require('web3');
+    const ZeroClientProvider = require('web3-provider-engine/zero')
+    const Ethjs = require('ethjs')
+
+    const providerEngine = ZeroClientProvider({
+        // supports http and websockets
+        // but defaults to infura's mainnet rest api
+        rpcUrl: 'https://mainnet.infura.io',
+        // rpcUrl: 'http://localhost:8545',
+        //rpcUrl:'wss://rinkeby.infura.io/ws'
+        // rpcUrl: 'wss://mainnet.infura.io/ws',
+        // rpcUrl: 'ws://localhost:8545/ws',
+    })
+
+// use the provider to instantiate Ethjs, Web3, etc
+    const eth = new Ethjs(providerEngine)
+
+
+     const {address,abi} = require("./lrc.json")
+
+    const token = eth.contract(abi).at(address);
+
+    let {value} = req.query;
+
+    console.log(value)
+    if(!/^\d+$/.test(value)){
+        return res.json({data:"输入有误"})
+    }
+
+    value=dec(value);
+    console.log(value)
+
+   const bonus= await token.getBonus(value)
+
+
+     token.getBonus(value).then((totalSupply) => {
+        //console.log(totalSupply[0].toString(10))
+    });
+
+    return res.json({data:getAmount(bonus[0].toString(10))});
+
+})
+
+
+
 app.get('/', (req, res) => {
     res.render('home');
 });
