@@ -18,11 +18,11 @@ async function main() {
     const hashTask = new HashTask();
     await hashTask.init()
     // await hashTask.websocket()
-    // await hashTask.test()
+      await hashTask.test()
 
 
     //await hashTask.updateToken(1)
-    await hashTask.parseToken()
+    //await hashTask.parseToken()
 
 }
 

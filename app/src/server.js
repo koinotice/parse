@@ -56,7 +56,7 @@ app.get('/api/rooms', async (req, res) => {
     query.equalTo('active', true);
 
     if(owner){
-        query.equalTo('owner', owner.toLowerCase());
+        query.equalTo('creator', owner.toLowerCase());
     }
     if(roomId){
         query.equalTo('roomId', parseInt(roomId));
