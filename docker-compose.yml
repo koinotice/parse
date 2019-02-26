@@ -49,8 +49,8 @@ services:
     - MONGODB_USERNAME=pmker
     - MONGODB_PASSWORD=Zheli123
     - MONGODB_DATABASE=pmker
-    volumes:
-    - '/hash/data/mongo:/bitnami'
+#    volumes:
+#    - '/hash/data/mongo:/bitnami'
 
   postgres:
     build: "./docker/postgres"
