@@ -51,6 +51,21 @@ module.exports = {
             env_production: {
                 NODE_ENV: 'production'
             }
+        },{
+            name: 'HashInit',
+            script: 'src/task.js',
+
+            instances: 1,
+            autorestart: true,
+            watch: ['./src/init.js', "./src/HashInit.js"],
+            ignore_watch: ["./src/db"],
+            max_memory_restart: '1G',
+            env: {
+                NODE_ENV: 'development'
+            },
+            env_production: {
+                NODE_ENV: 'production'
+            }
         }
 
     ],
