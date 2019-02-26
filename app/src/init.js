@@ -11,6 +11,7 @@ const {
 } = process.env;
 
 const Nats = require('nats').connect(NAT_URL);
+const eachLimit = require('async/eachLimit')
 
 async function main() {
 
@@ -19,10 +20,13 @@ async function main() {
     const hashInit = new HashInit();
     //Nats.publish("reset", "ordersInit")
     await hashInit.start();
-   // await hashInit.ordersInit();
-    //["roomsInit","ordersInit","parseToken","syncBlockInfo"]
+    //await hashInit.ordersInit();
+    //await Nats.publish("reset", "roomsInit")
+    // eachLimit(["roomsInit","ordersInit","parseToken","syncBlockInfo"],1,async function(n){
+    //     await Nats.publish("reset", n)
+    // })
 
-   // await Nats.publish("reset", "ordersInit")
+
 
     // Nats.publish("orderBlock", JSON.stringify([1,1]))
     // Nats.publish("orderBlock", JSON.stringify([1,1]))

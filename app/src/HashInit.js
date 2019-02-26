@@ -29,7 +29,19 @@ const web3 = new Web3(PROVIDER_URI);
 class HashInit {
     constructor() {
         this.contract = ""
-        // this.init();
+        logger.info("Init start")
+        const that = this
+        Nats.subscribe("reset", async function (cmd) {
+            logger.info("System reset %s ", cmd)
+            const cmds = ["roomsInit", "ordersInit", "parseToken", "syncBlockInfo"]
+
+            if (cmds.includes(cmd)) {
+                await that[cmd]()
+            }
+
+
+        })
+
     }
 
     async start() {
@@ -39,18 +51,6 @@ class HashInit {
         that.contract = contract(hashdice_artifact);
         that.contract.setProvider(new Web3(provider).currentProvider);
         that.hashContract = await that.contract.at(address)
-
-        logger.info("Init start")
-        Nats.subscribe("reset", async function (cmd) {
-            logger.info("System reset %s ", cmd)
-            const cmds= ["roomsInit","ordersInit","parseToken","syncBlockInfo"]
-
-            if(cmds.includes(cmd)){
-                await that[cmd]()
-            }
-
-
-        })
 
 
     }
