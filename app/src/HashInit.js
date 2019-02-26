@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const logger = require('./lib/logger')("HashInit")
+const logger = require('./lib/logger')("HashInit1")
 const eachLimit = require('async/eachLimit')
 const Web3 = require('web3');
 const {
