@@ -107,11 +107,11 @@ class HashInit {
         let orders = await query.find()
 
         console.log(orders)
-        // await Promise.all(orders.map(async event => {
-        //
-        //     console.log(event)
-        //     Nats.publish("orderBlock", JSON.stringify(event.get("roomId"),event.get("orderId")))
-        // }))
+        await Promise.all(orders.map(async event => {
+
+            console.log(event)
+            Nats.publish("orderBlock", JSON.stringify([event.get("roomId"),event.get("orderId")]))
+        }))
 
         logger.info("System reset Orders Success")
 
