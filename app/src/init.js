@@ -22,7 +22,7 @@ async function main() {
    // await hashInit.ordersInit();
     //["roomsInit","ordersInit","parseToken","syncBlockInfo"]
 
-    await Nats.publish("reset", "ordersInit")
+   // await Nats.publish("reset", "ordersInit")
 
     // Nats.publish("orderBlock", JSON.stringify([1,1]))
     // Nats.publish("orderBlock", JSON.stringify([1,1]))
