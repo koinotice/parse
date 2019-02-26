@@ -48,12 +48,12 @@ class HashTask {
         logger.info("HashTask init")
 
 
-        Nats.subscribe("orderBlock", function (data) {
+        Nats.subscribe("orderBlock", async function (data) {
             const ev = JSON.parse(data)
             logger.info('orderBlock %s ', JSON.stringify(data));
 
             try {
-                that.setOrderBlockInfo(data)
+                await that.setOrderBlockInfo(data)
             } catch (e) {
                 console.log(e)
             }
@@ -110,11 +110,12 @@ class HashTask {
     }
 
     async setOrderBlockInfo(dt) {
-        //console.log(dt)
+        console.log(dt)
         var query = new Parse.Query(Order);
         query.equalTo('roomId', parseInt(dt[0]));
         query.equalTo('orderId', parseInt(dt[1]));
         let order = await query.first()
+        console.log(order)
         const blockInfo = await this.getOrderBlockInfo(order.get("startBlock"))
         logger.info("order block %s",JSON.stringify(blockInfo))
 

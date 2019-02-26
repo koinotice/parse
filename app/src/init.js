@@ -16,11 +16,17 @@ async function main() {
 
 
     //开奖任务
-    const hashTask = new HashInit();
-
+    const hashInit = new HashInit();
+    //Nats.publish("reset", "ordersInit")
+    await hashInit.start();
+   // await hashInit.ordersInit();
     //["roomsInit","ordersInit","parseToken","syncBlockInfo"]
 
-    Nats.publish("reset", "start")
+    await Nats.publish("reset", "ordersInit")
+
+    // Nats.publish("orderBlock", JSON.stringify([1,1]))
+    // Nats.publish("orderBlock", JSON.stringify([1,1]))
+
 
 
 }

@@ -16,25 +16,25 @@ services:
 
 
   resgate:
-      image: resgate-hash:1.0
-      build:
-        context: './docker/resgate'
-      container_name: hash-resgate
-      expose:
-      - 8080
-      ports:
-      - 7200:8080
-      restart: always
-      command:
-        -n nats://nats:4222
-      environment:
-      - NODE_ENV=staging
-      - DB_HOST=postgres-lupinemoon
-      - HEMERA_LOG_LEVEL=debug
-      - JAEGER_URL=jaeger
-      - NATS_URL=nats://admin@zheli123@nats:4222
-      - NATS_USER=ruser
-      - NATS_PW=T0pS3cr3t
+    image: resgate-hash:1.0
+    build:
+      context: './docker/resgate'
+    container_name: hash-resgate
+    expose:
+    - 8080
+    ports:
+    - 7200:8080
+    restart: always
+    command:
+      -n nats://nats:4222
+    environment:
+    - NODE_ENV=staging
+    - DB_HOST=postgres-lupinemoon
+    - HEMERA_LOG_LEVEL=debug
+    - JAEGER_URL=jaeger
+    - NATS_URL=nats://admin@zheli123@nats:4222
+    - NATS_USER=ruser
+    - NATS_PW=T0pS3cr3t
 
 
 
@@ -49,8 +49,8 @@ services:
     - MONGODB_USERNAME=pmker
     - MONGODB_PASSWORD=Zheli123
     - MONGODB_DATABASE=pmker
-  #    volumes:
-  #    - './data:/bitnami'
+    volumes:
+    - '/hash/data/mongo:/bitnami'
 
   postgres:
     build: "./docker/postgres"
@@ -62,7 +62,7 @@ services:
       POSTGRES_USER: "pmker"
       POSTGRES_PASSWORD: "Zheli123"
     volumes:
-      - /hash/data/postgresql:/var/lib/postgresql/data
+    - /hash/data/postgresql:/var/lib/postgresql/data
   #  postgresql:
   #    image: 'bitnami/postgresql:latest'
   #    container_name: hash-postgresql
@@ -152,53 +152,53 @@ services:
 
 
 
-#  nats_1:
-#    image: nats:1.2.0-linux
-#    command: -config /etc/nats/nats.conf
-#    volumes:
-#    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
-#
-#  nats_2:
-#    image: nats:1.2.0-linux
-#    command: -config /etc/nats/nats.conf
-#
-#    volumes:
-#    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
-#
-#  nats_3:
-#    image: nats:1.2.0-linux
-#    command: -config /etc/nats/nats.conf
-#
-#    volumes:
-#    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
-#
-#  stan_1:
-#    image: nats-streaming:0.10.2-linux
-#    command: -config /etc/nats/stan.conf -cluster_bootstrap
-#    ports:
-#    - "4222:4222"
-#    - '8222:8222'
-#    volumes:
-#    - "./data/nats:/etc/nats/data"
-#    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
-#
-#  stan_2:
-#    image: nats-streaming:0.10.2-linux
-#    command: -config /etc/nats/stan.conf
-#    ports:
-#    - "24222:4222"
-#    volumes:
-#    - "./data/nats:/etc/nats/data"
-#    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
-#
-#  stan_3:
-#    image: nats-streaming:0.10.2-linux
-#    command: -config /etc/nats/stan.conf
-#    ports:
-#    - "34222:4222"
-#    volumes:
-#    - "./data/nats:/etc/nats/data"
-#    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
+  #  nats_1:
+  #    image: nats:1.2.0-linux
+  #    command: -config /etc/nats/nats.conf
+  #    volumes:
+  #    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
+  #
+  #  nats_2:
+  #    image: nats:1.2.0-linux
+  #    command: -config /etc/nats/nats.conf
+  #
+  #    volumes:
+  #    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
+  #
+  #  nats_3:
+  #    image: nats:1.2.0-linux
+  #    command: -config /etc/nats/nats.conf
+  #
+  #    volumes:
+  #    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
+  #
+  #  stan_1:
+  #    image: nats-streaming:0.10.2-linux
+  #    command: -config /etc/nats/stan.conf -cluster_bootstrap
+  #    ports:
+  #    - "4222:4222"
+  #    - '8222:8222'
+  #    volumes:
+  #    - "./data/nats:/etc/nats/data"
+  #    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
+  #
+  #  stan_2:
+  #    image: nats-streaming:0.10.2-linux
+  #    command: -config /etc/nats/stan.conf
+  #    ports:
+  #    - "24222:4222"
+  #    volumes:
+  #    - "./data/nats:/etc/nats/data"
+  #    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
+  #
+  #  stan_3:
+  #    image: nats-streaming:0.10.2-linux
+  #    command: -config /etc/nats/stan.conf
+  #    ports:
+  #    - "34222:4222"
+  #    volumes:
+  #    - "./data/nats:/etc/nats/data"
+  #    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
 
 
   hashdice:

@@ -143,19 +143,25 @@ app.get('/api/orders', async (req, res) => {
 
 app.get('/api/blocks', async (req, res) => {
     const query = new Parse.Query("Block");
-
-
     query.limit(100);
     query.skip(0);
     query.descending("number");// 先进先出，正序排列
-    // app.logge.info(limit)
 
-    var pipeline = [
-        {group: {objectId: '$tail', count: {$sum: 1}}}
-    ];
-    const data = await query.aggregate(pipeline)
+    const data = await query.find()
+    const dc=[]
+    data.forEach(function(n){
+        dc.push(n.toJSON())
+    })
+    const groups=_.groupBy(dc,"tail")
+    const ret=[]
+    _.map(groups,function(e,n){
+        var obj={}
+        obj[n]=e.length;
 
-    return res.json({data: data});
+        ret.push(obj)
+    })
+
+    return res.json({data: ret});
 });
 
 

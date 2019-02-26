@@ -3,22 +3,39 @@ if (!process.env.docker) {
         path: __dirname + '/../server.env'
     });
 }
-const ZeroClientProvider = require('web3-provider-engine/zero')
-const BotFactory = require("./BotFactory")
-const HashDice = require("./HashDice")
-const HashTask = require("./HashTask")
-const App = require("./server")
-const logger = require('./lib/logger')("HashApp2")
-const {Parse} = require('./lib/parse');
 
+const {Parse} = require('./lib/parse');
+const _=require("lodash")
 const Room = Parse.Object.extend("Room");
 const Order = Parse.Object.extend("Order");
 const Block = Parse.Object.extend("Block")
 async function main() {
+    const query = new Parse.Query("Block");
 
-    const hashDice = new HashDice()
-    await hashDice.init()
-    await hashDice.blockInfo()
+
+    query.limit(100);
+    query.skip(0);
+    query.descending("number");// 先进先出，正序排列
+    // app.logge.info(limit)
+
+    // var pipeline = [
+    //     {group: {objectId: '$tail', count: {$sum: 1}}}
+    // ];
+    const data = await query.find()
+    const dc=[]
+    data.forEach(function(n){
+        dc.push(n.toJSON())
+    })
+    const groups=_.groupBy(dc,"tail")
+    const res=[]
+    _.map(groups,function(e,n){
+        var obj={}
+        obj[n]=e.length;
+
+        res.push(obj)
+    })
+
+    console.log(res)
 
 
 }

@@ -40,7 +40,7 @@ class HashInit {
         that.contract.setProvider(new Web3(provider).currentProvider);
         that.hashContract = await that.contract.at(address)
 
-
+        logger.info("Init start")
         Nats.subscribe("reset", async function (cmd) {
             logger.info("System reset %s ", cmd)
             const cmds= ["roomsInit","ordersInit","parseToken","syncBlockInfo"]
