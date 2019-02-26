@@ -53,7 +53,7 @@ class HashTask {
             logger.info('orderBlock %s ', JSON.stringify(data));
 
             try {
-                await that.setOrderBlockInfo(data)
+                await that.setOrderBlockInfo(ev)
             } catch (e) {
                 console.log(e)
             }

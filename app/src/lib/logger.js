@@ -3,8 +3,13 @@ const Transport = require('winston-transport');
 const MESSAGE = Symbol.for('message');
 const moment = require('moment');
 const util = require('util');
-
-function Log(clientid = "hash") {
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}
+function Log(clientid ) {
+    clientid=clientid+getRandomInt(1,100)
     var stan = require('node-nats-streaming').connect('test-cluster', clientid, {
         url: process.env.NAT_URL
     });
