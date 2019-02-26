@@ -157,7 +157,7 @@ class HashDice {
         const blockHeight = parseInt(order[1].toNumber()) + parseInt(this.RoundPeriod)
 
         await client.sadd(blockHeight, roomId)
-        await client.sadd("order:" + (blockHeight + 1), [roomId, orderId])
+        await client.sadd("order:" + (blockHeight + 1),roomId+"_"+ orderId)
 
         //console.log(orderInfo)
         try {

@@ -96,7 +96,8 @@ class HashTask {
         client.smembers("order:" + data.number, async (err, reply) => {
             if (reply.length != 0) {
                 eachLimit(reply, 1, async (n) => {
-                    await that.setOrderBlockInfo(n)
+                    const dt=n.split("_")
+                    await that.setOrderBlockInfo(dt)
                 }, function (error) {
                     if (error) {
                         console.log(error)

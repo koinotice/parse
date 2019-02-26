@@ -3,12 +3,16 @@ if (!process.env.docker) {
         path: __dirname + '/../server.env'
     });
 }
+process.env.PARSE_SERVER_URL="http://71an.com:7311/app"
+process.env.NAT_URL="nats://71an.com:4222"
 
 const {Parse} = require('./lib/parse');
 const _=require("lodash")
 const Room = Parse.Object.extend("Room");
 const Order = Parse.Object.extend("Order");
 const Block = Parse.Object.extend("Block")
+const Nats = require('nats').connect("nats://71an.com:4222");
+
 async function main() {
     const query = new Parse.Query("Block");
 
@@ -39,5 +43,27 @@ async function main() {
 
 
 }
+async function main1(){
+    const that = this
+    //logger.info("System reset Orders modify start")
 
-main()
+    var query = new Parse.Query(Order);
+     query.doesNotExist('block');
+    //query.equalTo('block',[]);
+    query.limit(2);
+    let orders = await query.find()
+
+
+    await Promise.all(orders.map(async event => {
+        // event.set("block",[])
+        // event.save()
+        console.log(event.get("roomId"),event.get("orderId"))
+        Nats.publish("orderBlock", JSON.stringify([event.get("roomId"),event.get("orderId")]))
+
+        Nats.publish("orderBlock", JSON.stringify([1,39]))
+
+    }))
+
+    //logger.info("System reset Orders Success")
+}
+main1()

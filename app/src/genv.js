@@ -30,9 +30,9 @@ async function main1() {
     const hashTask = new HashTask();
     await hashTask.init()
     // await hashTask.websocket()
-      //await hashTask.test()
+    await hashTask.test()
 
-    await hashTask.syncBlockInfo()
+    //await hashTask.syncBlockInfo()
 
 
     //await hashTask.updateToken(1)

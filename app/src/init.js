@@ -20,7 +20,7 @@ async function main() {
     const hashInit = new HashInit();
     //Nats.publish("reset", "ordersInit")
     await hashInit.start();
-    ///await hashInit.syncBlockInfo();
+    await hashInit.ordersModify();
     //await Nats.publish("reset", "roomsInit")
     // eachLimit(["roomsInit","ordersInit","parseToken","syncBlockInfo"],1,async function(n){
     //     await Nats.publish("reset", n)

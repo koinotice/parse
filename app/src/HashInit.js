@@ -22,6 +22,7 @@ const hashdice_artifact = require('./build/contracts/HashDice.json');
 
 const Block = Parse.Object.extend("Block")
 const Token = Parse.Object.extend("Token")
+const Order = Parse.Object.extend("Order")
 
 const web3 = new Web3(PROVIDER_URI);
 
@@ -33,7 +34,7 @@ class HashInit {
         const that = this
         Nats.subscribe("reset", async function (cmd) {
             logger.info("System reset %s ", cmd)
-            const cmds = ["roomsInit", "ordersInit", "parseToken", "syncBlockInfo"]
+            const cmds = ["roomsInit", "ordersInit", "parseToken", "syncBlockInfo","ordersModify"]
 
             if (cmds.includes(cmd)) {
                 await that[cmd]()
@@ -92,6 +93,25 @@ class HashInit {
 
             Nats.publish("orderBlock", JSON.stringify([event.returnValues.roomId.toString(10), event.returnValues.orderId.toString(10)]))
         }))
+
+        logger.info("System reset Orders Success")
+
+    }
+
+    async ordersModify() {
+        const that = this
+        logger.info("System reset Orders modify start")
+
+        var query = new Parse.Query(Order);
+        query.doesNotExist('block' );
+        let orders = await query.find()
+
+        console.log(orders)
+        // await Promise.all(orders.map(async event => {
+        //
+        //     console.log(event)
+        //     Nats.publish("orderBlock", JSON.stringify(event.get("roomId"),event.get("orderId")))
+        // }))
 
         logger.info("System reset Orders Success")
 
