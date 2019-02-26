@@ -12,8 +12,8 @@ module.exports =
         // Add the host and database
         url += env.DB_HOST + '/parse_' + appId + '?authSource=admin';
 
-        if(typeof env.DB_URL !== 'undefined'){
-            url=env.DB_URL+"/parse_"+appId;
+        if(typeof env.PARSE_SERVER_DATABASE_URI !== 'undefined'){
+            url=env.PARSE_SERVER_DATABASE_URI+"/"+appId;
         }
         console.log(url)
         return url;

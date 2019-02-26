@@ -39,10 +39,8 @@ function Log(clientid = "hash") {
         defaultMeta: {service: clientid},
         transports: [
 
-            new transports.File({filename: '/hash/logs/hash-error.log', level: 'error'}),
-            new transports.File({filename: '/hash/logs/hash.log'}),
-
-
+            new transports.File({filename: '/hash/logs/'+clientid+'hash-error.log', level: 'error'}),
+            new transports.File({filename: '/hash/logs/'+clientid+'hash.log'}),
         ]
     });
 

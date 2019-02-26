@@ -13,7 +13,8 @@ const {
     NAT_URL,
     WALLET_MNEMONIC,
     RPC_URL,
-    DEPLOYMENT_GAS_LIMIT
+    DEPLOYMENT_GAS_LIMIT,
+    PROVIDER_URI
 } = process.env;
 const Nats = require('nats').connect(NAT_URL);
 const {client} = require('./lib/redis');
@@ -35,6 +36,9 @@ const {Parse} = require('./lib/parse');
 const Room = Parse.Object.extend("Room");
 const Order = Parse.Object.extend("Order");
 const Token =Parse.Object.extend("Token")
+const Block =Parse.Object.extend("Block")
+
+const web3 = new Web3(PROVIDER_URI);
 
 class HashTask {
     constructor() {
@@ -192,8 +196,55 @@ class HashTask {
         } catch (e) {
             console.log(e)
         }
+    }
 
+    async updateRoom(roomId){
 
+        let room = await this.hashContract.GetRoomInfo.call(roomId);
+        console.log(room)
+
+        const roomInfo = {
+            roomId: parseInt(roomId),
+            creator: room[0].toLowerCase(),
+            erc20Addr: room[1].toLowerCase(),
+            symbol: room[2],
+            name: room[3],
+            nominator: room[4].toString(10),
+            denominator: room[5].toString(10),
+            active: room[6],
+            currentOrderId: room[7].toString(10),
+            lastClosedOrderId: room[8].toString(10),
+            currentMaxCompensate: room[9].toString(10),
+            lastLockedValue: room[10].toString(10),
+        }
+
+        console.log(roomInfo)
+    }
+    async syncBlockInfo(){
+        const lastBlock=await web3.eth.getBlockNumber()
+        const contractHeight=3912804
+        const diff=(lastBlock-contractHeight)
+
+        var data = Array.from(new Array(diff), (val, index) => {
+            return contractHeight+index
+        });
+        eachLimit(data,5,async function(height){
+            const block=await web3.eth.getBlock(height)
+            const blockHash=block.hash
+            let bc = {
+                number: block.number,
+                hash: blockHash
+
+            }
+            console.log(bc)
+            const blockObj = new Block();
+            data.tail=blockHash.substring(blockHash.length-1)
+
+            blockObj.set(bc);
+
+            await blockObj.save()
+        })
+        //.then(console.log);
 
     }
 

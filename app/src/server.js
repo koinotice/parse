@@ -12,7 +12,7 @@ const http = require('http')
 const app = express();
 app.use(express.static('public'));
 app.use(cors())
-app.options("/*", function(req, res, next){
+app.options("/*", function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
@@ -27,6 +27,7 @@ const {Parse} = require('./lib/parse');
 const Room = Parse.Object.extend("Room");
 const Order = Parse.Object.extend("Order");
 const Token = Parse.Object.extend("Token");
+const Block = Parse.Object.extend("Block");
 
 app.get('/api/tokens', async (req, res) => {
 
@@ -34,13 +35,13 @@ app.get('/api/tokens', async (req, res) => {
 
     query.ascending('symbol');// 先进先出，正序排列
     // app.logge.info(limit)
-    const data= await query.find()
+    const data = await query.find()
     return res.json({data: data});
 });
 
 app.get('/api/rooms', async (req, res) => {
 
-    let {page,limit,owner,roomId,name,address,tokenId,desc} = req.query;
+    let {page, limit, owner, roomId, name, address, tokenId, desc} = req.query;
 
 
     page = parseInt(page) || 1;
@@ -55,43 +56,45 @@ app.get('/api/rooms', async (req, res) => {
 
     query.equalTo('active', true);
 
-    if(owner){
+    if (owner) {
         query.equalTo('creator', owner.toLowerCase());
     }
-    if(roomId){
+    if (roomId) {
         query.equalTo('roomId', parseInt(roomId));
     }
-    if(name){
+    if (name) {
         query.equalTo('name', name);
     }
 
-    if(tokenId){
+    if (tokenId) {
         var token = new Token();
         token.id = tokenId;
         query.equalTo("token", token);
     }
 
-    if(address){
-        query.equalTo('erc20Addr',  address.toLowerCase().trim());
+    if (address) {
+        query.equalTo('erc20Addr', address.toLowerCase().trim());
     }
 
     query.limit(limit);
     query.skip(limit * (page - 1));
-    if(!desc){
-       desc= "createdAt"
-    }else{
-        desc="currentOrderId"
+
+    const orders = ["createdAt", "currentOrderId", "roomId", "lastLockedValue", "lastClosedOrderId", "currentOrderId"]
+    //pets.includes('cat')
+    if (!orders.includes(desc)) {
+        desc = orders[0]
     }
+
     query.descending(desc);// 先进先出，正序排列
     // app.logge.info(limit)
-    const data= await query.find()
+    const data = await query.find()
     return res.json({data: data});
 });
 
 
 app.get('/api/orders', async (req, res) => {
 
-    let {page,limit,owner,roomId,orderId} = req.query;
+    let {page, limit, owner, roomId, orderId, desc, startBlock} = req.query;
     console.log(req.params)
 
     page = parseInt(page) || 1;
@@ -105,25 +108,32 @@ app.get('/api/orders', async (req, res) => {
     console.log(req.query)
 
     const query = new Parse.Query(Order);
-    if(owner){
+    if (owner) {
         query.equalTo('owner', owner.toLowerCase());
     }
-    if(roomId){
+    if (roomId) {
         query.equalTo('roomId', parseInt(roomId));
     }
 
 
-    if(orderId){
+    if (orderId) {
         query.equalTo('orderId', parseInt(orderId));
     }
+    if (startBlock) {
+        query.greaterThan("startBlock", startBlock)
+    }
 
-
+    const orders = ["createdAt", "orderId", "totalValue", "startBlock", "gain", "closed"]
+    //pets.includes('cat')
+    if (!orders.includes(desc)) {
+        desc = orders[0]
+    }
 
     query.limit(limit);
     query.skip(limit * (page - 1));
-    query.descending('createdAt');// 先进先出，正序排列
+    query.descending(desc);// 先进先出，正序排列
 
-    const data= await query.find()
+    const data = await query.find()
 
     console.log(data)
 
@@ -131,6 +141,22 @@ app.get('/api/orders', async (req, res) => {
 });
 
 
+app.get('/api/blocks', async (req, res) => {
+    const query = new Parse.Query("Block");
+
+
+    query.limit(100);
+    query.skip(0);
+    query.descending("number");// 先进先出，正序排列
+    // app.logge.info(limit)
+
+    var pipeline = [
+        {group: {objectId: '$tail', count: {$sum: 1}}}
+    ];
+    const data = await query.aggregate(pipeline)
+
+    return res.json({data: data});
+});
 
 
 //
@@ -253,8 +279,8 @@ function getAmount(amount) {
     return formatLength(number)
 
 }
-app.get('/api/lrc',async (req,res)=>{
 
+app.get('/api/lrc', async (req, res) => {
 
 
     const Web3 = require('web3');
@@ -275,31 +301,30 @@ app.get('/api/lrc',async (req,res)=>{
     const eth = new Ethjs(providerEngine)
 
 
-     const {address,abi} = require("./lrc.json")
+    const {address, abi} = require("./lrc.json")
 
     const token = eth.contract(abi).at(address);
 
     let {value} = req.query;
 
     console.log(value)
-    if(!/^\d+$/.test(value)){
-        return res.json({data:"输入有误"})
+    if (!/^\d+$/.test(value)) {
+        return res.json({data: "输入有误"})
     }
 
-    value=dec(value);
+    value = dec(value);
     console.log(value)
 
-   const bonus= await token.getBonus(value)
+    const bonus = await token.getBonus(value)
 
 
-     token.getBonus(value).then((totalSupply) => {
+    token.getBonus(value).then((totalSupply) => {
         //console.log(totalSupply[0].toString(10))
     });
 
-    return res.json({data:getAmount(bonus[0].toString(10))});
+    return res.json({data: getAmount(bonus[0].toString(10))});
 
 })
-
 
 
 app.get('/', (req, res) => {
@@ -317,4 +342,4 @@ app.get('/', (req, res) => {
 // const server = http.createServer(app)
 // server.listen(port)
 
-module.exports=app
+module.exports = app

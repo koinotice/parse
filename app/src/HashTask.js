@@ -6,9 +6,12 @@ const {
     NAT_URL,
     WALLET_MNEMONIC,
     RPC_URL,
-    DEPLOYMENT_GAS_LIMIT
+    DEPLOYMENT_GAS_LIMIT,
+    PROVIDER_URI
 } = process.env;
+
 const Nats = require('nats').connect(NAT_URL);
+
 const {client} = require('./lib/redis');
 
 const {address} = require("./hashDice.json")
@@ -17,6 +20,11 @@ const provider = new HDWalletProvider(WALLET_MNEMONIC, RPC_URL, 0, 3)
 const contract = require('truffle-contract');
 const hashdice_artifact = require('./build/contracts/HashDice.json');
 
+const {Parse} = require('./lib/parse');
+
+const Block = Parse.Object.extend("Block")
+const Order = Parse.Object.extend("Order")
+const web3 = new Web3(PROVIDER_URI);
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -38,6 +46,19 @@ class HashTask {
         that.contract.setProvider(new Web3(provider).currentProvider);
         that.hashContract = await that.contract.at(address)
         logger.info("HashTask init")
+
+
+        Nats.subscribe("orderBlock", function (data) {
+            const ev = JSON.parse(data)
+            logger.info('orderBlock %s ', JSON.stringify(data));
+
+            try {
+                that.setOrderBlockInfo(data)
+            } catch (e) {
+                console.log(e)
+            }
+            //nats.publish("foo", i++ + "")
+        })
     }
 
     async BlockWatch(block) {
@@ -49,6 +70,16 @@ class HashTask {
             number: blockNumber,
             hash: blockHash
         }
+        console.log(data)
+        const blockObj = new Block();
+        data.tail = blockHash.substring(blockHash.length - 1)
+
+        blockObj.set(data);
+
+        const bc = await blockObj.save()
+
+        //  console.log(bc)
+
         client.smembers(data.number, async (err, reply) => {
             if (reply.length != 0) {
                 eachLimit(reply, 1, async (n) => {
@@ -62,7 +93,68 @@ class HashTask {
                 })
             }
         });
+        client.smembers("order:" + data.number, async (err, reply) => {
+            if (reply.length != 0) {
+                eachLimit(reply, 1, async (n) => {
+                    await that.setOrderBlockInfo(n)
+                }, function (error) {
+                    if (error) {
+                        console.log(error)
+                    } else {
+                        console.log("ok")
+                    }
+                })
+            }
+        });
 
+    }
+
+    async setOrderBlockInfo(dt) {
+        //console.log(dt)
+        var query = new Parse.Query(Order);
+        query.equalTo('roomId', parseInt(dt[0]));
+        query.equalTo('orderId', parseInt(dt[1]));
+        let order = await query.first()
+        const blockInfo = await this.getOrderBlockInfo(order.get("startBlock"))
+        //console.log(blockInfo)
+
+        order.set("block", blockInfo)
+        await order.save()
+    }
+
+    async getOrderBlockInfo(height) {
+
+        var data = Array.from(new Array(10), (val, index) => {
+            return height + index
+        });
+
+        const bcs = []
+        const promise = new Promise(function (resolve, reject) {
+            eachLimit(data, 10, async function (height) {
+                const block = await web3.eth.getBlock(height)
+                const blockHash = block.hash
+                let bc = {
+                    number: block.number,
+                    hash: blockHash
+
+                }
+                //console.log(height,bc)
+                //const blockObj = new Block();
+                bc.tail = blockHash.substring(blockHash.length - 1)
+                bcs.push(bc)
+
+            }, function (error) {
+
+                if (error) {
+                    reject(err);
+                } else {
+                    resolve(bcs);
+                }
+            })
+        })
+        console.log(bcs)
+        console.log(await promise)
+        return await promise;
     }
 
 
@@ -95,44 +187,22 @@ class HashTask {
         }
 
     }
-    async websocket(){
 
-        const nats=Nats
-        const room={ message: JSON.stringify([]) }
-        nats.subscribe('get.hash.rooms', function(req, reply) {
-            nats.publish(reply, JSON.stringify({ result: { model: room }}));
+    async websocket() {
+
+        const nats = Nats
+        const room = {message: JSON.stringify([])}
+        nats.subscribe('get.hash.rooms', function (req, reply) {
+            nats.publish(reply, JSON.stringify({result: {model: room}}));
         });
 
-// Access listener. Everyone gets read access and access to call the set-method
         nats.subscribe('access.hash.rooms', (req, reply) => {
-            nats.publish(reply, JSON.stringify({ result: { get: true }}));
+            nats.publish(reply, JSON.stringify({result: {get: true}}));
         });
 
-        nats.publish('system.reset', JSON.stringify({ resources: [ 'hash.>' ]}));
+        nats.publish('system.reset', JSON.stringify({resources: ['hash.>']}));
 
         logger.info("websocket rooms")
-
-
-    }
-
-
-
-
-    async test() {
-
-        //const hashContract = await that.contract.at(address)
-        // console.log(provider)
-        const accounts = provider.getAddresses()
-        const account = accounts[getRandomInt(0, accounts.length)]
-        console.log(accounts, account, DEPLOYMENT_GAS_LIMIT)
-
-        const order = await this.hashContract.SubmitBetOrder(1, 0, "0x1", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], {
-            from: accounts[0],
-            gas: DEPLOYMENT_GAS_LIMIT
-        });
-
-
-        console.log("order test", order)
 
 
     }

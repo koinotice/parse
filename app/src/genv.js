@@ -11,14 +11,18 @@ if (!process.env.docker) {
 const HashTask = require("./HashTest")
 //const App = require("./server")
 const App = require("./server")
-const logger = require('./lib/logger')("HashApp")
+// const logger = require('./lib/logger')("HashApp")
+//
+// async function main() {
+//     const PORT = 9999;
+//     App.listen(PORT, () => {
+//        // logger.info(`Hash Server listening on port ${PORT}`);
+//     });
 
-async function main() {
-    const PORT = process.env.HASH_PORT || 80;
-    App.listen(PORT, () => {
-        logger.info(`Hash Server listening on port ${PORT}`);
-    });
-}
+
+// }
+//
+// main()
 async function main1() {
 
 
@@ -26,7 +30,9 @@ async function main1() {
     const hashTask = new HashTask();
     await hashTask.init()
     // await hashTask.websocket()
-      await hashTask.test()
+      //await hashTask.test()
+
+    await hashTask.syncBlockInfo()
 
 
     //await hashTask.updateToken(1)
@@ -34,4 +40,4 @@ async function main1() {
 
 }
 
-main()
+main1()
