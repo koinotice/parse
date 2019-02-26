@@ -12,13 +12,13 @@ const {
 const Nats = require('nats').connect(NAT_URL);
 const {client} = require('./lib/redis');
 
-const {address} = require("./hashDice.json")
+const {address,contractHeight} = require("./hashDice.json")
 const HDWalletProvider = require("truffle-hdwallet-provider")
 const provider = new HDWalletProvider(WALLET_MNEMONIC, RPC_URL, 0, 3)
 const contract = require('truffle-contract');
 const hashdice_artifact = require('./build/contracts/HashDice.json');
 
-const {Parse} = require('./lib/parse');
+ const {Parse} = require('./lib/parse');
 
 const Block = Parse.Object.extend("Block")
 const Token = Parse.Object.extend("Token")
@@ -61,7 +61,7 @@ class HashInit {
         const events = await this.hashContract.getPastEvents(
             'RoomOpened',
             {
-                fromBlock: 0,
+                fromBlock: contractHeight,
                 toBlock: "latest"
             }
         )
@@ -82,14 +82,15 @@ class HashInit {
         const events = await this.hashContract.getPastEvents(
             'NewBetOrder',
             {
-                fromBlock: 0,
+                fromBlock: contractHeight,
                 toBlock: "latest"
             }
         )
 
         await Promise.all(events.map(async event => {
             Nats.publish(address, JSON.stringify(event));
-            Nats.publish("orderBlock", JSON.stringify([event.roomId, event.orderId]))
+
+            Nats.publish("orderBlock", JSON.stringify([event.returnValues.roomId.toString(10), event.returnValues.orderId.toString(10)]))
         }))
 
         logger.info("System reset Orders Success")
@@ -131,7 +132,7 @@ class HashInit {
 
     async syncBlockInfo() {
         const lastBlock = await web3.eth.getBlockNumber()
-        const contractHeight = 3912804
+
         const diff = (lastBlock - contractHeight)
 
         var data = Array.from(new Array(diff), (val, index) => {
