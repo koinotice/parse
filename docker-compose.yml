@@ -140,8 +140,8 @@ services:
     #environment:
     # SECRET=YOUR_SECRET_CODE
     volumes:
-    - ./data/download:/aria2/downloads
-    - ./data/conf:/aria2/conf
+    - /hash/data/download:/aria2/downloads
+    - /hash/data/conf:/aria2/conf
 
 
 
