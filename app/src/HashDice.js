@@ -23,7 +23,7 @@ const Nats = require('nats').connect(NAT_URL);
 const {address} = require("./hashDice.json")
 const HDWalletProvider = require("truffle-hdwallet-provider")
 const provider = new HDWalletProvider(WALLET_MNEMONIC, RPC_URL, 0, 5)
-const Tcontract = require('truffle-contract'); 
+const Tcontract = require('truffle-contract');
 const hashdice_artifact = require('./build/contracts/HashDice.json');
 const web3 = new Web3(PROVIDER_URI);
 
