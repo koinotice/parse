@@ -17,7 +17,9 @@ async function main() {
 
     //开奖任务
     const hashTask = new HashInit();
-    await hashTask.start()
+
+    //["roomsInit","ordersInit","parseToken","syncBlockInfo"]
+
     Nats.publish("reset", "start")
 
 

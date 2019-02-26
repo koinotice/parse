@@ -43,11 +43,16 @@ class HashInit {
 
         Nats.subscribe("reset", async function (cmd) {
             logger.info("System reset %s ", cmd)
-            await that.roomsInit()
-            await that.ordersInit()
-            await that.parseToken()
-            await that.syncBlockInfo()
+            const cmds= ["roomsInit","ordersInit","parseToken","syncBlockInfo"]
+
+            if(cmds.includes(cmd)){
+                await that[cmd]()
+            }
+
+
         })
+
+
     }
 
     async roomsInit() {

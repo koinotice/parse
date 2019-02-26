@@ -116,7 +116,7 @@ class HashTask {
         query.equalTo('orderId', parseInt(dt[1]));
         let order = await query.first()
         const blockInfo = await this.getOrderBlockInfo(order.get("startBlock"))
-        //console.log(blockInfo)
+        logger.info("order block %s",JSON.stringify(blockInfo))
 
         order.set("block", blockInfo)
         await order.save()
@@ -152,8 +152,7 @@ class HashTask {
                 }
             })
         })
-        console.log(bcs)
-        console.log(await promise)
+
         return await promise;
     }
 
