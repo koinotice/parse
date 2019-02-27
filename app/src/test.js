@@ -38,7 +38,9 @@ async function main1() {
             }
             if(i<5){
                coin.symbol=tokens[i].symbol
-               coin.address=tokens[i].address
+
+               coin.digits=tokens[i].digits
+               coin.address=tokens[i].address.toLocaleLowerCase()
             }
             i++
            // console.log(coin)

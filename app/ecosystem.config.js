@@ -66,6 +66,21 @@ module.exports = {
             env_production: {
                 NODE_ENV: 'production'
             }
+        },{
+            name: 'HashEvent',
+            script: 'src/Events.js',
+
+            instances: 2,
+            autorestart: true,
+            watch: ['./src/Events.js' ],
+            ignore_watch: ["./src/db"],
+            max_memory_restart: '1G',
+            env: {
+                NODE_ENV: 'development'
+            },
+            env_production: {
+                NODE_ENV: 'production'
+            }
         }
 
     ],

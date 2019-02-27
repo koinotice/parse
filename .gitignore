@@ -13,6 +13,8 @@ logs
 lab
 parse/node_modules
 hash/node_modules
+fuel-web3-provider
+web3-hdwallet-provider
 .env
 parse.env
 hash
