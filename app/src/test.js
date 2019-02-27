@@ -23,6 +23,9 @@ async function main1() {
     fs.readdir("../public/logo", async function (err, items) {
         var p=["0x37f44cabc8fc42efff4ca8e62f230f84afdf86cb","0x564E021D1eC3a1686c5337722864977F9beEf83a","0x477dFD81af7DF0EdeC1B425909e4d9558776A735","0xff3c82c878d249c6d6afbfddf4caa2a48192c65e","0xc9f95b34f728bce8a056d24ec27f056af0a3443f"]
         var c=["AAA","View","Age","Yue","Moon"]
+
+        var tokens=require("./tokens.json")
+
         var i=0;
         eachLimit(items ,1,async function(item){
             let coin = {
@@ -34,8 +37,8 @@ async function main1() {
                 "step": 10
             }
             if(i<5){
-               coin.symbol=c[i]
-               coin.address=p[i]
+               coin.symbol=tokens[i].symbol
+               coin.address=tokens[i].address
             }
             i++
            // console.log(coin)

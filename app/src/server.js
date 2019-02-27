@@ -153,15 +153,15 @@ app.get('/api/blocks', async (req, res) => {
         dc.push(n.toJSON())
     })
     const groups=_.groupBy(dc,"tail")
-    const ret=[]
+    var obj={}
     _.map(groups,function(e,n){
-        var obj={}
+
         obj[n]=e.length;
 
-        ret.push(obj)
+
     })
 
-    return res.json({data: ret});
+    return res.json({data: obj});
 });
 
 
