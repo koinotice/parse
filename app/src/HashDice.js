@@ -178,6 +178,7 @@ class HashDice {
                 order.set("roomId", parseInt(roomId))
                 order.set("orderId", parseInt(orderId))
                 order.set("roomName", roomInfo.get("name"))
+                order.set("token", roomInfo.get("token"))
 
             }
             order.set(orderInfo)
