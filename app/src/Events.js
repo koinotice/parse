@@ -8,6 +8,7 @@ const {
     NAT_URL,
 
 } = process.env;
+const logger = require('./lib/logger')("HashEvents")
 
 const Nats = require('nats').connect(NAT_URL);
 
@@ -24,6 +25,8 @@ const instance = new web34.eth.Contract(hashabi, address);
 instance.events.allEvents(  (error, event) => {
    // console.log(1,event);
 }).on('data', (event) => {
+
+    logger.info('Event %s params %s', event.event, JSON.stringify(event.returnValues));
 
     Nats.publish(address, JSON.stringify(event));
 }).on('changed', (event) => {
