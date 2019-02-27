@@ -110,6 +110,36 @@ class HashTask {
 
     }
 
+    async CloseBetOrders(roomId) {
+        logger.info("CloseBetOrders roomId %s", roomId)
+        //const hashContract = await that.contract.at(address)
+        // console.log(provider)
+        const accounts = provider.getAddresses()
+        const account = accounts[getRandomInt(0, accounts.length)]
+        console.log(accounts, account, DEPLOYMENT_GAS_LIMIT)
+
+        const order = await this.hashContract.CloseBetOrders(roomId, {from: account, gas: DEPLOYMENT_GAS_LIMIT});
+
+
+        if (order.receipt) {
+            const event = {
+                returnValues: {
+                    roomId: roomId,
+                },
+                event: 'CloseBetOrders',
+            }
+            if (order.receipt.status == true) {
+                await Nats.publish(address, JSON.stringify(event))
+                logger.info("HashTask success blockNumber %s roomId %s", order.receipt.blockNumber + 2, roomId)
+            } else {
+                //如果操作失败，2个区块后重试
+                await client.sadd(order.receipt.blockNumber + 2, roomId);
+                logger.error("HashTask fail blockNumber %s roomId %s", order.receipt.blockNumber + 2, roomId)
+            }
+        }
+
+    }
+
     async setOrderBlockInfo(dt) {
         console.log(dt)
         var query = new Parse.Query(Order);
@@ -159,35 +189,7 @@ class HashTask {
     }
 
 
-    async CloseBetOrders(roomId) {
-        logger.info("CloseBetOrders roomId %s", roomId)
-        //const hashContract = await that.contract.at(address)
-        // console.log(provider)
-        const accounts = provider.getAddresses()
-        const account = accounts[getRandomInt(0, accounts.length)]
-        console.log(accounts, account, DEPLOYMENT_GAS_LIMIT)
 
-        const order = await this.hashContract.CloseBetOrders(roomId, {from: account, gas: DEPLOYMENT_GAS_LIMIT});
-
-
-        if (order.receipt) {
-            const event = {
-                returnValues: {
-                    roomId: roomId,
-                },
-                event: 'CloseBetOrders',
-            }
-            if (order.receipt.status == true) {
-                await Nats.publish(address, JSON.stringify(event))
-                logger.info("HashTask success blockNumber %s roomId %s", order.receipt.blockNumber + 2, roomId)
-            } else {
-                //如果操作失败，2个区块后重试
-                await client.sadd(order.receipt.blockNumber + 2, roomId);
-                logger.error("HashTask fail blockNumber %s roomId %s", order.receipt.blockNumber + 2, roomId)
-            }
-        }
-
-    }
 
     async websocket() {
 

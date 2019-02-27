@@ -184,7 +184,7 @@ class HashDice {
             order.set("roomName", roomInfo.get("name"))
             order.set("token", roomInfo.get("token"))
 
-            
+
             order.set(orderInfo)
             await order.save()
 

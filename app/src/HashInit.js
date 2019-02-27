@@ -109,7 +109,7 @@ class HashInit {
         console.log(orders)
         await Promise.all(orders.map(async event => {
 
-            console.log(event)
+
             Nats.publish("orderBlock", JSON.stringify([event.get("roomId"),event.get("orderId")]))
         }))
 
