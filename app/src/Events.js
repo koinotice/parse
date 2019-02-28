@@ -5,6 +5,9 @@ if (!process.env.docker) {
 }
 const eachLimit = require('async/eachLimit')
 
+process.env.PARSE_SERVER_URL = "http://71an.com:7311/app"
+process.env.NAT_URL = "nats://71an.com:4222"
+process.env.REDIS_IO_URL="redis://:Zheli123@71an.com:7379"
 
 
 const {
@@ -63,10 +66,11 @@ web34.eth.subscribe('newBlockHeaders', function (error, result) {
     }
     //client.set(data.number, JSON.stringify(data));
     console.log(data)
+    //await  CloseBetOrders(26)
     await BlockWatch(data)
 
 
-    //await  CloseBetOrders(1)
+    // await  CloseBetOrders(26)
 
 
 }).on("error", console.error);
@@ -121,6 +125,7 @@ async function CloseBetOrders(roomId) {
 
     const order = await hashContract.CloseBetOrders(roomId, {from: account, gas: DEPLOYMENT_GAS_LIMIT});
 
+    console.log(order)
 
     if (order.receipt) {
         const event = {
@@ -140,3 +145,9 @@ async function CloseBetOrders(roomId) {
     }
 
 }
+
+async function main(){
+
+    await  CloseBetOrders(27)
+}
+main()

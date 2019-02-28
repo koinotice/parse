@@ -24,7 +24,7 @@ parseArray.forEach(appId =>
         appId: appId,
         databaseURI: db.buildConnectionUrl(process.env, appId),
         liveQuery: {
-            classNames: ["Room", "Order"] // List of classes to support for query subscriptions
+            classNames: ["Room", "Order","Token","Block"] // List of classes to support for query subscriptions
         }
        // cloud: "./cloud/"+appId,
     });

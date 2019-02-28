@@ -1,19 +1,6 @@
 version: '3'
 
 services:
-  #  nats:
-  #    image: nats-hash:1.0
-  #    build:
-  #      context: './docker/nats'
-  #    container_name: hash-nats
-  #    expose:
-  #    - 4222
-  #    - 8222
-  #    ports:
-  #    - 4222:4222
-  #    - 8222:8222
-  #    restart: always
-
 
   resgate:
     image: resgate-hash:1.0
@@ -38,19 +25,28 @@ services:
 
 
 
-
   mongo:
-    image: 'bitnami/mongodb:latest'
+    image: mongo
+    restart: always
     container_name: hash-mongo
-    ports:
-    - "27017:27017"
-    environment:
-    - MONGODB_ROOT_PASSWORD=Zheli123
-    - MONGODB_USERNAME=pmker
-    - MONGODB_PASSWORD=Zheli123
-    - MONGODB_DATABASE=pmker
-#    volumes:
-#    - '/hash/data/mongo:/bitnami'
+    env_file:
+    - .env
+    volumes:
+    - /hash/data/mongo:/data/db
+#    - ./docker/mongo/docker-entrypoint-initdb:/docker-entrypoint-initdb.d
+#    - ./docker/mongo/scripts:/scripts/
+  #  mongo:
+  #    image: 'bitnami/mongodb:latest'
+  #    container_name: hash-mongo
+  #    ports:
+  #    - "27017:27017"
+  #    environment:
+  #    - MONGODB_ROOT_PASSWORD=Zheli123
+  #    - MONGODB_USERNAME=pmker
+  #    - MONGODB_PASSWORD=Zheli123
+  #    - MONGODB_DATABASE=pmker
+  #    volumes:
+  #    - '/hash/data/mongo:/bitnami'
 
   postgres:
     build: "./docker/postgres"
@@ -126,88 +122,13 @@ services:
     volumes:
     - ./parse/cloud:/app/cloud
 
-  aria2:
-    image: aria2:1.0
-    build:
-      context: './docker/aria2'
-    container_name: aria2
-
-    ports:
-    - 7322:80
-    - 6800:6800
-    - 7320:8080
-    restart: always
-
-    #environment:
-    # SECRET=YOUR_SECRET_CODE
-    volumes:
-    - /hash/data/download:/aria2/downloads
-    - /hash/data/conf:/aria2/conf
-
-
-
-  #    volumes:
-  #    - ./data/redis:/bitnami/redis
-
-
-
-
-  #  nats_1:
-  #    image: nats:1.2.0-linux
-  #    command: -config /etc/nats/nats.conf
-  #    volumes:
-  #    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
-  #
-  #  nats_2:
-  #    image: nats:1.2.0-linux
-  #    command: -config /etc/nats/nats.conf
-  #
-  #    volumes:
-  #    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
-  #
-  #  nats_3:
-  #    image: nats:1.2.0-linux
-  #    command: -config /etc/nats/nats.conf
-  #
-  #    volumes:
-  #    - "./docker/nats/nats.conf:/etc/nats/nats.conf"
-  #
-  #  stan_1:
-  #    image: nats-streaming:0.10.2-linux
-  #    command: -config /etc/nats/stan.conf -cluster_bootstrap
-  #    ports:
-  #    - "4222:4222"
-  #    - '8222:8222'
-  #    volumes:
-  #    - "./data/nats:/etc/nats/data"
-  #    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
-  #
-  #  stan_2:
-  #    image: nats-streaming:0.10.2-linux
-  #    command: -config /etc/nats/stan.conf
-  #    ports:
-  #    - "24222:4222"
-  #    volumes:
-  #    - "./data/nats:/etc/nats/data"
-  #    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
-  #
-  #  stan_3:
-  #    image: nats-streaming:0.10.2-linux
-  #    command: -config /etc/nats/stan.conf
-  #    ports:
-  #    - "34222:4222"
-  #    volumes:
-  #    - "./data/nats:/etc/nats/data"
-  #    - "./docker/nats/stan.conf:/etc/nats/stan.conf"
-
-
-  hashdice:
-    build: ./app/
-    container_name: hash-app
+  hashgame:
+    build: ./hash/
+    container_name: hashgame
     #image: hashapp:latest
     volumes:
-    - ./app:/app
-    - /app/node_modules/
+    - ./hash:/app
+    - /hash/cache/node_modules/
     - /hash/logs:/hash/logs
     ports:
     - '7300:80'
