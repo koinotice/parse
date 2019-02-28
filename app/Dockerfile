@@ -1,4 +1,4 @@
-FROM node:10-alpine as builder
+FROM node:alpine as builder
 
 ARG NODE_ENV=development
 ENV NODE_ENV=${NODE_ENV}
@@ -11,11 +11,13 @@ RUN npm install
 
 
 # The instructions for second stage
-FROM node:10-alpine
+FROM node:alpine
+
+# Install pm2
+RUN npm install pm2 -g
 
 WORKDIR /usr/src/app
 COPY --from=builder node_modules node_modules
-RUN npm install pm2 -g
 
 COPY . .
 
