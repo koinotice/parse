@@ -1,9 +1,9 @@
-import ethUtil from 'ethereumjs-util';
-import Big from 'bignumber.js';
-import BN from "bn.js";
+const ethUtil = require('ethereumjs-util');
+const Big = require('bignumber.js');
+const BN = require("bn.js");
 
 
-export function toBuffer(buffer) {
+function toBuffer(buffer) {
     if (buffer instanceof Buffer) {
         return buffer;
     } else {
@@ -12,7 +12,7 @@ export function toBuffer(buffer) {
 }
 
 // Number | BigNumber |  BN  | Buffer | String
-export function toHex(mixed) {
+function toHex(mixed) {
 
     if (typeof mixed === 'number' || mixed instanceof Big || mixed instanceof BN) {
         return "0x" + mixed.toString(16)
@@ -34,7 +34,7 @@ export function toHex(mixed) {
     throw new Error('Unsupported type')
 }
 
-export function toNumber(mixed) {
+function toNumber(mixed) {
     if (typeof mixed === 'number') {
         return mixed
     }
@@ -50,7 +50,7 @@ export function toNumber(mixed) {
     throw new Error('Unsupported type')
 }
 
-export function toBig(mixed) {
+function toBig(mixed) {
 
     if (mixed instanceof Big) {
         return mixed;
@@ -70,11 +70,11 @@ export function toBig(mixed) {
 
 }
 
-export function toBN(mixed) {
+function toBN(mixed) {
     return (mixed instanceof BN) ? mixed : new BN(toBig(mixed).toString(10), 10);
 }
 
-export function formatKey(mixed) {
+function formatKey(mixed) {
 
     if (mixed instanceof Buffer) {
         return mixed.toString('hex')
@@ -86,7 +86,7 @@ export function formatKey(mixed) {
     throw new Error('Unsupported type')
 }
 
-export function formatAddress(mixed) {
+function formatAddress(mixed) {
     if (mixed instanceof Buffer) {
         return '0x' + mixed.toString('hex')
     }
@@ -98,7 +98,7 @@ export function formatAddress(mixed) {
 
 }
 
-export function addHexPrefix(input) {
+function addHexPrefix(input) {
 
 
     if (typeof input === 'string') {
@@ -108,7 +108,7 @@ export function addHexPrefix(input) {
     throw new Error('Unsupported type')
 }
 
-export function clearPrefix(input) {
+function clearPrefix(input) {
 
 
     if (typeof input === 'string') {
@@ -119,7 +119,7 @@ export function clearPrefix(input) {
 
 }
 
-export function getDisplaySymbol(settingsCurrency) {
+function getDisplaySymbol(settingsCurrency) {
     switch (settingsCurrency) {
         case 'CNY':
             return '￥';
@@ -130,7 +130,7 @@ export function getDisplaySymbol(settingsCurrency) {
     }
 }
 
-export function toFixed(number, precision) {
+function toFixed(number, precision) {
     if (number > 0 && precision > 0) {
         let numberArr = null
         if (number.toString().indexOf('e-') > -1) {
@@ -155,6 +155,48 @@ export function toFixed(number, precision) {
     } else {
         return '0'
     }
+}
+
+
+
+
+
+const formatLength = (value) => {
+    value = Number(value)
+    // fix bug: value == string
+    if (value && typeof value === 'number') {
+    } else {
+        value = 0
+    }
+    if (value > 1000) {
+        return value.toFixed(2)
+    }
+    if (value <= 1000 && value >= 1) {
+        return value.toFixed(2)
+    }
+    if (value < 1 && value >= 0.001) {
+        return value.toFixed(5)
+    }
+    if (value < 0.001 & value > 0) {
+        return value.toFixed(8)
+    }
+    if (value === 0) {
+        return 0.00
+    }
+}
+
+ function getAmount(amount,digits) {
+    let number
+    if (amount) {
+        number = (toNumber(amount) / Number('1e' + digits)).toFixed(4)
+    } else {
+        number = 0
+    }
+    return formatLength(number)
+
+}
+module.exports={
+    getAmount
 }
 
 

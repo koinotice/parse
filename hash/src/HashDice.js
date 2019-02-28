@@ -5,6 +5,7 @@ const Web3 = require('web3');
 
 const {client} = require('./lib/redis');
 const {Parse} = require('./lib/parse');
+const {getAmount} = require('./lib/format');
 const eachLimit = require('async/eachLimit')
 
 const Room = Parse.Object.extend("Room");
@@ -106,7 +107,7 @@ class HashDice {
             room.set("token", token);
 
             room.set(roomInfo)
-            const messages=await room.save()
+            const messages = await room.save()
             Nats.publish('event.hash.rooms.change', JSON.stringify({message: JSON.stringify(messages.toJSON())}));
 
         } catch (e) {
@@ -129,7 +130,7 @@ class HashDice {
             let room = await query.first()
             const token = room.get("token");
             token.increment("count")
-            const messages=await token.save()
+            const messages = await token.save()
             logger.info("Token update count %s", JSON.stringify(room.get("token").toJSON()))
             Nats.publish('event.hash.tokens.change', JSON.stringify({message: JSON.stringify(messages.toJSON())}));
         } catch (e) {
@@ -144,21 +145,26 @@ class HashDice {
         let order = await this.contract.GetBetOrder.call(roomId, orderId);
         // return (order.owner, order.startBlock, order.totalValue, order.gain, order.betType,
         //     order.closed, order.betValue);
+
+        // console.log(order[3].toString(10),parseInt(order[3].toString(10)))
+        // return
         const orderInfo = {
             owner: order[0].toLowerCase(),
             startBlock: order[1].toNumber(),
-            totalValue: order[2].toString(10),
-            gain: parseInt(order[3].toString(10)),
-            gains:order[3].toString(10),
+
+            //gain: parseInt(order[3].toString(10)),
+            gains: order[3].toString(10),
             betType: "0x" + order[4].toString(16),
             closed: order[5],
             betValue: order[6].toString(10)
         }
+        const gain = order[3].toString(10)
+        const totalValue = order[2].toString(10)
 
         const blockHeight = parseInt(order[1].toNumber()) + parseInt(this.RoundPeriod)
 
         await client.sadd(blockHeight, roomId)
-        await client.sadd("order:" + (blockHeight + 1),roomId+"_"+ orderId)
+        await client.sadd("order:" + (blockHeight + 1), roomId + "_" + orderId)
 
         //console.log(orderInfo)
         try {
@@ -172,27 +178,32 @@ class HashDice {
             if (order == undefined) {
 
                 order = new Order();
-                order.set("status",0)
+                order.set("status", 0)
 
             }
 
             const room = new Parse.Query(Room);
 
             room.equalTo('roomId', parseInt(roomId));
+            room.include("token")
             const roomInfo = await room.first()
             order.set("roomId", parseInt(roomId))
             order.set("orderId", parseInt(orderId))
             order.set("roomName", roomInfo.get("name"))
             order.set("token", roomInfo.get("token"))
 
+ 
 
+            order.set("gain", Number(getAmount(gain, roomInfo.get("token").get("digits"))))
+            order.set("totalValue", Number(getAmount(totalValue, roomInfo.get("token").get("digits"))))
             order.set(orderInfo)
 
-            const messages=await order.save()
+            const messages = await order.save()
             Nats.publish('event.hash.orders.change', JSON.stringify({message: JSON.stringify(messages.toJSON())}));
 
         } catch (e) {
             console.log(e)
+            logger.error(JSON.stringify(e));
         }
 
     }
@@ -248,28 +259,29 @@ class HashDice {
     async PayBetOwner(ev) {
         logger.info('PayBetOwner ');
         await this.updateBetOrder(ev.roomId, ev.orderId)
-        await this.UpdateOrderStatus(ev.roomId, ev.orderId,1)
+        await this.UpdateOrderStatus(ev.roomId, ev.orderId, 1)
 
     }
 
     async CloseRoundTooLate(ev) {
-        logger.info('CloseRoundTooLate roomId %s,orderId %s',ev.roomId, ev.orderId);
+        logger.info('CloseRoundTooLate roomId %s,orderId %s', ev.roomId, ev.orderId);
         //await this.updateBetOrder(ev.roomId,  ev.orderId)
-        await this.UpdateOrderStatus(ev.roomId, ev.orderId,3)
+        await this.UpdateOrderStatus(ev.roomId, ev.orderId, 3)
 
     }
+
     /*
     status  1,中奖;2,未中奖，3,退回
      */
-    async UpdateOrderStatus(roomId,orderId,status){
+    async UpdateOrderStatus(roomId, orderId, status) {
         var query = new Parse.Query(Order);
         query.equalTo('roomId', parseInt(roomId));
 
         query.equalTo('orderId', parseInt(orderId));
         let order = await query.first()
-        order.set("status",status)
+        order.set("status", status)
         await order.save();
-        logger.info("UpdateOrderStatus roomId %s,orderId %s,status %s",roomId,orderId,status)
+        logger.info("UpdateOrderStatus roomId %s,orderId %s,status %s", roomId, orderId, status)
 
     }
 
