@@ -125,7 +125,7 @@ services:
   hashgame:
     build: ./hash/
     container_name: hashgame
-    #image: hashapp:latest
+    #image: hashdice:latest
     volumes:
     - ./hash:/app
 #    - /hash/cache/node_modules/
