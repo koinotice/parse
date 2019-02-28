@@ -5,8 +5,8 @@ if (!process.env.docker) {
 }
 const eachLimit = require('async/eachLimit')
 
- process.env.PARSE_SERVER_URL = "http://71an.com:7311/app"
- process.env.NAT_URL = "nats://71an.com:4222"
+ // process.env.PARSE_SERVER_URL = "http://71an.com:7311/app"
+ // process.env.NAT_URL = "nats://71an.com:4222"
 // process.env.REDIS_IO_URL="redis://:Zheli123@71an.com:7379"
 //
 
