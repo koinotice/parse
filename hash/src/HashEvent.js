@@ -5,8 +5,8 @@ if (!process.env.docker) {
 }
 const eachLimit = require('async/eachLimit')
 
-// process.env.PARSE_SERVER_URL = "http://71an.com:7311/app"
-// process.env.NAT_URL = "nats://71an.com:4222"
+ // process.env.PARSE_SERVER_URL = "http://71an.com:7311/app"
+ // process.env.NAT_URL = "nats://71an.com:4222"
 // process.env.REDIS_IO_URL="redis://:Zheli123@71an.com:7379"
 //
 
@@ -59,17 +59,36 @@ instance.events.allEvents(  (error, event) => {
 });
 
 async function reCheckOrder(number){
+    console.log(number)
     const query = new Parse.Query(Order);
 
     query.lessThan("startBlock", number-20)
-    query.equalTo('closed', 'false');
+    query.equalTo('closed', false);
     const data = await query.find()
 
-    console.log(data)
     _.forEach(data,function(order){
+       // console.log(order.get("roomId"))
 
         Nats.publish("CloseBetOrders", JSON.stringify([order.get("roomId")]));
     })
+
+    // const query1 = new Parse.Query(Order);
+    //
+    // query.lessThan("startBlock", number-20)
+    // query.equalTo('closed', false);
+    // const data = await query.find()
+    //
+    // _.forEach(data,function(order){
+    //     // console.log(order.get("roomId"))
+    //
+    //     Nats.publish("CloseBetOrders", JSON.stringify([order.get("roomId")]));
+    // })
+    //
+    //
+    //
+    // Nats.publish("orderBlock", JSON.stringify([event.returnValues.roomId.toString(10), event.returnValues.orderId.toString(10)]))
+
+ 
 
 }
 
@@ -90,5 +109,5 @@ web34.eth.subscribe('newBlockHeaders', function (error, result) {
     await reCheckOrder(data.number)
     //Nats.publish("newBlock", JSON.stringify(data));
 
-}).on("error", logger.error(JSON.stringify(error)));
+}).on("error",error=>{logger.error(JSON.stringify(error))} );
 //
