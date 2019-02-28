@@ -7,6 +7,7 @@ RUN apk --no-cache add python make g++ git
 
 COPY package*.json ./
 RUN npm install
+RUN npm install pm2 -g
 
 # The instructions for second stage
 FROM node:10-alpine
