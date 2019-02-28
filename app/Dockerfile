@@ -12,10 +12,10 @@ RUN npm install
 
 # The instructions for second stage
 FROM node:10-alpine
-RUN npm install --save-prod pm2 -g
 
 WORKDIR /usr/src/app
 COPY --from=builder node_modules node_modules
+RUN npm install pm2 -g
 
 COPY . .
 
