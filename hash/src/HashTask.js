@@ -70,14 +70,13 @@ class HashTask {
             number: blockNumber,
             hash: blockHash
         }
-        console.log(data)
+
         const blockObj = new Block();
         data.tail = blockHash.substring(blockHash.length - 1)
 
         blockObj.set(data);
-
-        const bc = await blockObj.save()
-
+        const messages = await blockObj.save()
+        Nats.publish('event.hash.blocks.change', JSON.stringify({message: JSON.stringify(messages.toJSON())}));
         //  console.log(bc)
 
         client.smembers(data.number, async (err, reply) => {

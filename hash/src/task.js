@@ -22,6 +22,7 @@ async function main() {
     //区块监控
     providerEngine.on('block', async function (block) {
         await hashTask.BlockWatch(block)
+
     })
 
 }

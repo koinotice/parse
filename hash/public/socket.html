@@ -18,18 +18,37 @@
 
     // Get the model from the service.
     client.get('hash.rooms').then(model => {
-        // Create an input element
-        // let input = document.createElement('input');
-        // input.value = model.message;
-        // root.appendChild(input);
-        //
-        // // Call set to update the remote model
-        // input.addEventListener('input', () => {
-        //     model.set({ message: input.value });
-        // });
 
-        // Listen for model change events.
-        // The model will be unsubscribed after calling model.off
+        model.on('change', () => {
+            try {
+                roomList = JSON.parse(model.message)
+                console.log(roomList)
+            }catch (e) {
+
+            }
+
+        });
+    }).catch(err => {
+        console.log(err)
+
+    });
+
+    client.get('hash.orders').then(model => {
+
+        model.on('change', () => {
+            try {
+                roomList = JSON.parse(model.message)
+                console.log(roomList)
+            }catch (e) {
+
+            }
+
+        });
+    }).catch(err => {
+        console.log(err)
+
+    });
+    client.get('hash.blocks').then(model => {
          
         model.on('change', () => {
             try {
@@ -38,9 +57,7 @@
             }catch (e) {
 
             }
-            // console.log(roomList[0].hash)
-            // //input.value = model.message;
-            // root.textContent=(model.room);
+
         });
     }).catch(err => {
         console.log(err)

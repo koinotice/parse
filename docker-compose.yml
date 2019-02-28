@@ -29,10 +29,10 @@ services:
     image: mongo
     restart: always
     container_name: hash-mongo
-    env_file:
-    - .env
-    volumes:
-    - /hash/data/mongo:/data/db
+#    env_file:
+#    - .env
+#    volumes:
+#    - /hash/data/mongo:/data/db
 #    - ./docker/mongo/docker-entrypoint-initdb:/docker-entrypoint-initdb.d
 #    - ./docker/mongo/scripts:/scripts/
   #  mongo:

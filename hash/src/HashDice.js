@@ -106,13 +106,13 @@ class HashDice {
             room.set("token", token);
 
             room.set(roomInfo)
-            await room.save()
+            const messages=await room.save()
+            Nats.publish('event.hash.rooms.change', JSON.stringify({message: JSON.stringify(messages.toJSON())}));
 
         } catch (e) {
             console.log(e)
         }
 
-        Nats.publish('event.hash.rooms.change', JSON.stringify({message: JSON.stringify(roomInfo)}));
 
         // Nats.publish('event.hash.rooms.change', JSON.stringify({message: roomInfo}));
         logger.info("Room update room %s ", roomId)
@@ -129,8 +129,9 @@ class HashDice {
             let room = await query.first()
             const token = room.get("token");
             token.increment("count")
-            await token.save()
+            const messages=await token.save()
             logger.info("Token update count %s", JSON.stringify(room.get("token").toJSON()))
+            Nats.publish('event.hash.tokens.change', JSON.stringify({message: JSON.stringify(messages.toJSON())}));
         } catch (e) {
             logger.error(e)
         }
@@ -186,8 +187,9 @@ class HashDice {
 
 
             order.set(orderInfo)
-            await order.save()
 
+            const messages=await order.save()
+            Nats.publish('event.hash.orders.change', JSON.stringify({message: JSON.stringify(messages.toJSON())}));
 
         } catch (e) {
             console.log(e)
