@@ -20,5 +20,5 @@ COPY . .
 
 
 EXPOSE 80
-CMD ["pm2-runtime", "./ecosystem.config.js"]
+CMD ["pm2", "./ecosystem.config.js"]
 
