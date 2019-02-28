@@ -128,8 +128,8 @@ services:
     #image: hashapp:latest
     volumes:
     - ./hash:/app
-    - /hash/cache/node_modules/
-    - /hash/logs:/hash/logs
+#    - /hash/cache/node_modules/
+#    - /hash/logs:/hash/logs
     ports:
     - '7300:80'
     env_file:
