@@ -3,8 +3,8 @@ if (!process.env.docker) {
         path: __dirname + '/../server.env'
     });
 }
-process.env.PARSE_SERVER_URL = "http://71an.com:7311/app"
-process.env.NAT_URL = "nats://71an.com:4222"
+// process.env.PARSE_SERVER_URL = "http://71an.com:7311/app"
+// process.env.NAT_URL = "nats://71an.com:4222"
 
 const {Parse} = require('./lib/parse');
 const _ = require("lodash")

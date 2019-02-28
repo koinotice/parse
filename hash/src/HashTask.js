@@ -59,6 +59,21 @@ class HashTask {
             }
             //nats.publish("foo", i++ + "")
         })
+        //重新开奖
+        Nats.subscribe("CloseBetOrders", async function (data) {
+            const reply = JSON.parse(data)
+            logger.error('re CloseBetOrders %s ', JSON.stringify(data));
+
+            eachLimit(reply, 1, async (n) => {
+                await that.CloseBetOrders(n)
+            }, function (error) {
+                if (error) {
+                    console.log(error)
+                } else {
+                    console.log("ok")
+                }
+            })
+        })
     }
 
     async BlockWatch(block) {

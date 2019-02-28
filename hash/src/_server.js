@@ -117,7 +117,7 @@ app.get('/api/orders', async (req, res) => {
         query.equalTo('orderId', parseInt(orderId));
     }
     if (closed) {
-        query.equalTo('closed', closed);
+        query.equalTo('closed', Boolean(closed));
     }
     if (startBlock) {
         query.greaterThan("startBlock", startBlock)

@@ -31,6 +31,13 @@ const Web3 = require('web3');
 const {address,hashabi} = require("./hashDice.json")
 const Tcontract = require('truffle-contract');
 const hashdice_artifact = require('./build/contracts/HashDice.json');
+const {Parse} = require('./lib/parse');
+const _ = require("lodash")
+
+var fs = require('fs');
+
+
+const Order = Parse.Object.extend("Order");
 
 
 const web34 = new Web3( "wss://rinkeby.infura.io/ws" )
@@ -48,23 +55,40 @@ instance.events.allEvents(  (error, event) => {
 }).on('changed', (event) => {
     //console.log(3,event);
 }).on('error', (error) => {
-    console.error(error);
+    logger.error(JSON.stringify(error));
 });
 
-// web34.eth.subscribe('newBlockHeaders', function (error, result) {
-//     if (!error) {
-//         return;
-//     }
-//     console.error(error);
-// }).on("data",async function (blockHeader) {
-//     let data = {
-//         number: blockHeader.number,
-//         hash: blockHeader.hash,
-//         gasLimit: blockHeader.gasLimit,
-//         parentHash: blockHeader.parentHash
-//     }
-//
-//     Nats.publish("newBlock", JSON.stringify(data));
-//
-// }).on("error", console.error);
+async function reCheckOrder(number){
+    const query = new Parse.Query(Order);
+
+    query.lessThan("startBlock", number-20)
+    query.equalTo('closed', 'false');
+    const data = await query.find()
+
+    console.log(data)
+    _.forEach(data,function(order){
+
+        Nats.publish("CloseBetOrders", JSON.stringify([order.get("roomId")]));
+    })
+
+}
+
+
+web34.eth.subscribe('newBlockHeaders', function (error, result) {
+    if (!error) {
+        return;
+    }
+    console.error(error);
+}).on("data",async function (blockHeader) {
+    let data = {
+        number: blockHeader.number,
+        hash: blockHeader.hash,
+        gasLimit: blockHeader.gasLimit,
+        parentHash: blockHeader.parentHash
+    }
+
+    await reCheckOrder(data.number)
+    //Nats.publish("newBlock", JSON.stringify(data));
+
+}).on("error", logger.error(JSON.stringify(error)));
 //
