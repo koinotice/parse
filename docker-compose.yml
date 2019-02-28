@@ -139,6 +139,8 @@ services:
     environment:
     - docker=true
 
+    command: "npx pm2 start ecosystem.config.js --no-daemon"
+
 
 networks:
   genv-dev:
