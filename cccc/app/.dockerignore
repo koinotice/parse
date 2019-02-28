@@ -1,7 +1,0 @@
-node_modules
-
-logs
-*.log
-**/node_modules
-lab
-server.env
