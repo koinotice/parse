@@ -1,0 +1,39 @@
+[
+  {
+    "symbol": "AAA",
+    "name": "3A Token",
+    "digits": 18,
+    "address": "0x37f44cabc8fc42efff4ca8e62f230f84afdf86cb",
+    "logo": "http://47.244.53.52:7300/logo/3.png",
+    "step": 10
+  } ,{
+    "symbol": "View",
+    "name": "View Token",
+    "digits": 18,
+    "address": "0x564E021D1eC3a1686c5337722864977F9beEf83a",
+    "logo": "http://47.244.53.52:7300/logo/3.png",
+    "step": 100
+  } ,{
+    "symbol": "Age",
+    "name": "Age Token",
+    "digits": 18,
+    "address": "0x477dFD81af7DF0EdeC1B425909e4d9558776A735",
+    "logo": "http://47.244.53.52:7300/logo/2.png",
+    "step": 10
+  },{
+    "symbol": "Yue",
+    "name": "Yue Token",
+    "digits": 18,
+    "address": "0xff3c82c878d249c6d6afbfddf4caa2a48192c65e",
+    "logo": "http://47.244.53.52:7300/logo/1.png",
+    "step": 1
+  },{
+    "symbol": "Moon",
+    "name": "Moon Token",
+    "digits": 0,
+    "address": "0xc9f95b34f728bce8a056d24ec27f056af0a3443f",
+    "logo": "http://47.244.53.52:7300/logo/4.png",
+    "step": 1
+  }
+]
+

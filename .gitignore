@@ -17,7 +17,7 @@ fuel-web3-provider
 web3-hdwallet-provider
 .env
 parse.env
-hash
+app
 app/node_modules
 dice
 
