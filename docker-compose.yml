@@ -129,7 +129,7 @@ services:
 
     volumes:
     - ./app:/app
-    - /usr/src/app/node_modules
+    - /app/node_modules
     #    - /hash/cache/node_modules/
     #    - /hash/logs:/hash/logs
     ports:
