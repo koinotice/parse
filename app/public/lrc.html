@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <!--
+    Customize this policy to fit your own app's needs. For more guidance, see:
+        https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+    Some notes:
+      * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+      * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+      * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+        * Enable inline JS: add 'unsafe-inline' to default-src
+    -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap: content:">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
+
+    <meta name="theme-color" content="#007aff">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <title>LRC长期锁仓收益查询</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@1.6/lib/index.css"/>
+
+    <!-- built styles file will be auto injected -->
+</head>
+<style>
+    /* reset & preset */
+    html {
+        height: 100%;
+        box-sizing: border-box;
+        font-family: sans-serif;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        -ms-overflow-style: scrollbar;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale
+    }
+
+    * {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    *:before, *:after {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    @-ms-viewport {
+        width: device-width;
+    }
+
+    article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, section {
+        display: block;
+    }
+
+    body {
+        height: 100%;
+        margin: 0;
+        background: #fff;
+        font-family: "Helvetica Neue", "Helvetica", "Arial", "Verdana", "sans-serif";
+        font-size: 13px;
+        font-weight: normal;
+        color: rgba(0, 0, 0, .87);
+    }
+
+    [tabindex="-1"]:focus {
+        outline: none !important;
+    }
+
+    hr {
+        box-sizing: content-box;
+        height: 0;
+        overflow: visible;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        margin-top: 0;
+    }
+
+    p, p:last-child {
+        margin-top: 0;
+        margin-bottom: 0;
+        line-height: 1.5;
+    }
+
+    p:nth-child {
+        margin-bottom: 10px;
+    }
+
+    abbr[title], abbr[data-original-title] {
+        text-decoration: underline;
+        -webkit-text-decoration: underline dotted;
+        text-decoration: underline dotted;
+        cursor: help;
+        border-bottom: 0;
+    }
+
+    address {
+        margin-bottom: 1rem;
+        font-style: normal;
+        line-height: inherit;
+    }
+
+    ol, ul, dl {
+        margin: 0;
+        padding: 0;
+    }
+
+    ol ol, ul ul, ol ul, ul ol {
+        margin-bottom: 0;
+    }
+
+    dt {
+        font-weight: bold;
+    }
+
+    dd {
+        margin-left: 0;
+    }
+
+    dfn {
+        font-style: italic;
+    }
+
+    b, strong {
+        font-weight: bolder;
+    }
+
+    small {
+        font-size: 80%;
+    }
+
+    sub, sup {
+        position: relative;
+        font-size: 75%;
+        line-height: 0;
+        vertical-align: baseline;
+    }
+
+    sub {
+        bottom: -4em;
+    }
+
+    sup {
+        top: -.5em;
+    }
+
+    a {
+        color: #0062cc;
+        text-decoration: none;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+        transition: all 0.45s ease-in-out;
+    }
+
+    a:hover {
+        color: #1C60FF;
+        text-decoration: none;
+    }
+
+    a:not([href]):not([tabindex]) {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    a:not([href]):not([tabindex]):focus, a:not([href]):not([tabindex]):hover {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    a:not([href]):not([tabindex]):focus {
+        outline: 0;
+    }
+
+    a:focus {
+        outline: 0;
+    }
+
+    .van-field__label {
+        max-width: 105px;
+        padding-top: 3px;
+    }
+
+    .van-cell__value--alone {
+        color: #323233;
+        text-align: left;
+
+    }
+
+    [v-cloak] {
+        display: none;
+    }
+
+</style>
+<body>
+
+<div id="app" v-cloak>
+
+
+    <van-cell-group>
+        <van-cell>
+            <img src="./banner.png" width="100%"/>
+
+        </van-cell>
+        <van-cell is-link >
+            <a href="https://blogs.loopring.org/longterm-incentive-plan/" target="_blank">关于路印长期锁仓计划的说明  </a>
+        </van-cell>
+
+        <van-cell is-link >
+            <a href="https://blogs.loopring.org/locking-plan/" target="_blank"> 路印协议锁仓计划的解锁时间表 </a>
+        </van-cell>
+
+        <van-cell-group>
+
+            <van-field
+                    v-model="amount"
+
+                    clearable
+                    label="锁仓数量(LRC):"
+                    placeholder="0"
+                    @focus="success=false"
+                    type="number"
+
+            />
+            <van-button slot="button" size="small" @click="getBonus" type="primary" size="large">计算</van-button>
+            </van-field>
+
+        </van-cell-group>
+
+        <van-cell v-show="success">
+            <van-col span="14">锁仓数量：<b>{{ amount }}</b> LRC</van-col>
+            <van-col span="14">实时解锁奖励：<b>{{ bonus }}</b> LRC</van-col>
+            <van-col span="14">赎回数量：<b>{{ count }}</b> LRC</van-col>
+            <van-col span="14">回&nbsp; 报&nbsp; 率：<b>{{ rate }}</b></van-col>
+        </van-cell>
+        <van-cell v-show="load">
+            计算中……
+        </van-cell>
+
+    </van-cell-group>
+
+</div>
+
+
+</div>
+
+<!-- import script -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@1.6/lib/vant.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+    const ajax = axios.create({
+
+        baseURL: '',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+
+    });
+
+    new Vue({
+        data: {
+            amount: "",
+            result: 0,
+            bonus: 0,
+            checked: true,
+            success: false,
+            load: false
+        },
+        computed: {
+            // 计算属性的 getter
+            count: function () {
+                return parseInt(this.amount) + parseInt(this.bonus)
+            },
+            rate: function () {
+                return (parseInt(this.bonus) / parseInt(this.amount) * 100).toFixed(2) + "%"
+            }
+        },
+        methods: {
+            getBonus: async function (event) {
+                if (this.amount <= 0 || this.amount == "") {
+                    return;
+                }
+                this.success = false;
+                this.load = true;
+                const response = await ajax.get('/api/lrc?value=' + this.amount);
+                this.bonus = response.data.data
+                this.success = true;
+                this.load = false;
+
+            },
+
+        }
+    }).$mount("#app");
+
+
+</script>
+</body>
+</html>

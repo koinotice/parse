@@ -29,12 +29,12 @@ services:
     image: mongo
     restart: always
     container_name: hash-mongo
-#    env_file:
-#    - .env
-#    volumes:
-#    - /hash/data/mongo:/data/db
-#    - ./docker/mongo/docker-entrypoint-initdb:/docker-entrypoint-initdb.d
-#    - ./docker/mongo/scripts:/scripts/
+  #    env_file:
+  #    - .env
+  #    volumes:
+  #    - /hash/data/mongo:/data/db
+  #    - ./docker/mongo/docker-entrypoint-initdb:/docker-entrypoint-initdb.d
+  #    - ./docker/mongo/scripts:/scripts/
   #  mongo:
   #    image: 'bitnami/mongodb:latest'
   #    container_name: hash-mongo
@@ -122,14 +122,16 @@ services:
     volumes:
     - ./parse/cloud:/app/cloud
 
-  hashgame:
-    build: ./hash/
-    container_name: hashgame
+  hashdice:
+    build: ./app/
+    container_name: hashdice
     #image: hashdice:latest
+
     volumes:
-    - ./hash:/app
-#    - /hash/cache/node_modules/
-#    - /hash/logs:/hash/logs
+    - ./app:/usr/src/app
+    - /usr/src/app/node_modules
+    #    - /hash/cache/node_modules/
+    #    - /hash/logs:/hash/logs
     ports:
     - '7300:80'
     env_file:
