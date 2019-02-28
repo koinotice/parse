@@ -128,7 +128,7 @@ services:
     #image: hashdice:latest
 
     volumes:
-    - ./app:/usr/src/app
+    - ./app:/app
     - /usr/src/app/node_modules
     #    - /hash/cache/node_modules/
     #    - /hash/logs:/hash/logs

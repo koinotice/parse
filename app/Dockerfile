@@ -1,27 +1,18 @@
-FROM node:alpine as builder
+FROM node
 
-ARG NODE_ENV=development
-ENV NODE_ENV=${NODE_ENV}
+# Create app directory
+RUN mkdir -p /app
+RUN mkdir -p /hash
+WORKDIR /app
 
-RUN apk --no-cache add python make g++ git
-ENV NPM_CONFIG_UNSAFE_PERM=true
-COPY package*.json ./
+# Install app dependencies
+COPY package.json /app
+
 RUN npm install
-
-
-
-# The instructions for second stage
-FROM node:alpine
-
-# Install pm2
 RUN npm install pm2 -g
-
-WORKDIR /usr/src/app
-COPY --from=builder node_modules node_modules
-
-COPY . .
-
-
+# Bundle app source
+COPY . /app
+#RUN yarn build
 
 EXPOSE 80
 CMD ["pm2-runtime", "./ecosystem.config.js"]
