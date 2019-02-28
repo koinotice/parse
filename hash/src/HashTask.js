@@ -115,7 +115,7 @@ class HashTask {
         // console.log(provider)
         const accounts = provider.getAddresses()
         const account = accounts[getRandomInt(0, accounts.length)]
-        console.log(accounts, account, DEPLOYMENT_GAS_LIMIT)
+        //console.log(accounts, account, DEPLOYMENT_GAS_LIMIT)
 
         const order = await this.hashContract.CloseBetOrders(roomId, {from: account, gas: DEPLOYMENT_GAS_LIMIT});
 
@@ -199,6 +199,30 @@ class HashTask {
         });
 
         nats.subscribe('access.hash.rooms', (req, reply) => {
+            nats.publish(reply, JSON.stringify({result: {get: true}}));
+        });
+
+        nats.subscribe('get.hash.blocks', function (req, reply) {
+            nats.publish(reply, JSON.stringify({result: {model: room}}));
+        });
+
+        nats.subscribe('access.hash.blocks', (req, reply) => {
+            nats.publish(reply, JSON.stringify({result: {get: true}}));
+        });
+
+        nats.subscribe('get.hash.orders', function (req, reply) {
+            nats.publish(reply, JSON.stringify({result: {model: room}}));
+        });
+
+        nats.subscribe('access.hash.orders', (req, reply) => {
+            nats.publish(reply, JSON.stringify({result: {get: true}}));
+        });
+
+        nats.subscribe('get.hash.tokens', function (req, reply) {
+            nats.publish(reply, JSON.stringify({result: {model: room}}));
+        });
+
+        nats.subscribe('access.hash.tokens', (req, reply) => {
             nats.publish(reply, JSON.stringify({result: {get: true}}));
         });
 

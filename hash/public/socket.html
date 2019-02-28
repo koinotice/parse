@@ -63,6 +63,22 @@
         console.log(err)
 
     });
+
+    client.get('hash.tokens').then(model => {
+
+        model.on('change', () => {
+            try {
+                roomList = JSON.parse(model.message)
+                console.log(roomList)
+            }catch (e) {
+
+            }
+
+        });
+    }).catch(err => {
+        console.log(err)
+
+    });
 </script>
 </body>
 </html>
