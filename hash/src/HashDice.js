@@ -192,7 +192,7 @@ class HashDice {
             order.set("roomName", roomInfo.get("name"))
             order.set("token", roomInfo.get("token"))
 
- 
+
 
             order.set("gain", Number(getAmount(gain, roomInfo.get("token").get("digits"))))
             order.set("totalValue", Number(getAmount(totalValue, roomInfo.get("token").get("digits"))))
