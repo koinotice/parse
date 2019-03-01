@@ -120,7 +120,7 @@ class HashDice {
 
     }
 
-    async updateToken(roomId) {
+    async updateToken(roomId,number) {
 
         try {
 
@@ -129,7 +129,7 @@ class HashDice {
             query.include("token");
             let room = await query.first()
             const token = room.get("token");
-            token.increment("count")
+            token.increment("count",number)
             const messages = await token.save()
             logger.info("Token update count %s", JSON.stringify(room.get("token").toJSON()))
             Nats.publish('event.hash.tokens.change', JSON.stringify({message: JSON.stringify(messages.toJSON())}));
@@ -214,7 +214,7 @@ class HashDice {
 
         await this.updateRoom(ev.id)
 
-        await this.updateToken(ev.id)
+        await this.updateToken(ev.id,1)
 
     }
 
@@ -253,6 +253,8 @@ class HashDice {
     async RoomClosed(ev) {
         logger.info('RoomClosed ');
         await this.updateRoom(ev.roomId)
+        await this.updateToken(ev.id,-1)
+
         console.log("Deposited")
     }
 
@@ -260,6 +262,16 @@ class HashDice {
         logger.info('PayBetOwner ');
         await this.updateBetOrder(ev.roomId, ev.orderId)
         await this.UpdateOrderStatus(ev.roomId, ev.orderId, 1)
+
+
+        var query = new Parse.Query(Order);
+        query.equalTo('roomId', parseInt(ev.roomId));
+
+        query.equalTo('orderId', parseInt(ev.orderId));
+        let order = await query.first()
+
+         Nats.publish('event.hash.messages.change', JSON.stringify({message: JSON.stringify(order.toJSON())}));
+
 
     }
 

@@ -1,0 +1,153 @@
+version: '3'
+
+services:
+
+#  resgate:
+#    image: resgate-hash:1.0
+#    build:
+#      context: './docker/resgate'
+#    container_name: hash-resgate
+#    expose:
+#    - 8080
+#    ports:
+#    - 7200:8080
+#    restart: always
+#    command:
+#      -n nats://nats:4222
+#    environment:
+#    - NODE_ENV=staging
+#    - DB_HOST=postgres-lupinemoon
+#    - HEMERA_LOG_LEVEL=debug
+#    - JAEGER_URL=jaeger
+#    - NATS_URL=nats://admin@zheli123@nats:4222
+#    - NATS_USER=ruser
+#    - NATS_PW=T0pS3cr3t
+#
+#
+#
+#  mongo:
+#    image: mongo
+#    restart: always
+#    container_name: hash-mongo
+#  #    env_file:
+#  #    - .env
+#  #    volumes:
+#  #    - /hash/data/mongo:/data/db
+#  #    - ./docker/mongo/docker-entrypoint-initdb:/docker-entrypoint-initdb.d
+#  #    - ./docker/mongo/scripts:/scripts/
+#  #  mongo:
+#  #    image: 'bitnami/mongodb:latest'
+#  #    container_name: hash-mongo
+#  #    ports:
+#  #    - "27017:27017"
+#  #    environment:
+#  #    - MONGODB_ROOT_PASSWORD=Zheli123
+#  #    - MONGODB_USERNAME=pmker
+#  #    - MONGODB_PASSWORD=Zheli123
+#  #    - MONGODB_DATABASE=pmker
+#  #    volumes:
+#  #    - '/hash/data/mongo:/bitnami'
+#
+#  postgres:
+#    build: "./docker/postgres"
+#    restart: "always"
+#    ports:
+#    - 5432:5432
+#    environment:
+#      POSTGRES_DB: "pmker"
+#      POSTGRES_USER: "pmker"
+#      POSTGRES_PASSWORD: "Zheli123"
+#    volumes:
+#    - /hash/data/postgresql:/var/lib/postgresql/data
+#  #  postgresql:
+#  #    image: 'bitnami/postgresql:latest'
+#  #    container_name: hash-postgresql
+#  #    ports:
+#  #    - '5432:5432'
+#  #    environment:
+#  #    - POSTGRESQL_USERNAME=pmker
+#  #    - POSTGRESQL_PASSWORD=Zheli123
+#  #    - POSTGRESQL_DATABASE=pmker
+#  #    volumes:
+#  #    - './data:/bitnami'
+#
+#  #  redis:
+#  #    image: 'bitnami/redis:latest'
+#  #    ports:
+#  #    - '7379:6379'
+#  #    environment:
+#  #    - REDIS_PASSWORD=Zheli123
+#
+#  redis:
+#    image: redis:${REDIS_VERSION}
+#    container_name: hash-redis
+#    ports:
+#    - "${REDIS_HOST_PORT}:6379"
+#    volumes:
+#    - ${REDIS_CONF_FILE}:/etc/redis.conf:ro
+#    restart: always
+#    entrypoint: ["redis-server", "/etc/redis.conf"]
+#
+#  #  rabbitmq:
+#  #    image: 'bitnami/rabbitmq:latest'
+#  #    ports:
+#  #    - 15672:15672
+#  #    environment:
+#  #    - RABBITMQ_PASSWORD=my_password
+#
+#
+#
+#  nats:
+#    image: nats-streaming:latest
+#    restart: always
+#    command: -m 8222 --store SQL --sql_driver postgres --sql_source "postgres://pmker:Zheli123@postgres/pmker?sslmode=disable"
+#    ports:
+#    - "4222:4222"
+#    - "8222:8222"
+#
+#  natsboard:
+#    build:
+#      context: "./docker/natsboard"
+#    ports:
+#    - "7400:3000"
+#    - "7401:3001"
+#
+#  parse:
+#    build: ./docker/parse
+#    container_name: hash-parse
+#    ports:
+#    - 7311:1337
+#    env_file:
+#    - .env
+#    volumes:
+#    - ./parse/cloud:/app/cloud
+  aria2:
+    image: aria2:1.0
+    build:
+      context: './docker/aria2'
+    container_name: aria2
+
+    ports:
+    - 7322:80
+    - 6800:6800
+    - 7320:8080
+    restart: always
+
+    #environment:
+    # SECRET=YOUR_SECRET_CODE
+    volumes:
+    - /hash/data/download:/aria2/downloads
+    - /hash/data/conf:/aria2/conf
+
+
+
+    #command: "npx pm2 start ecosystem.config.js --no-daemon"
+
+
+networks:
+  genv-dev:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.3.0.0/24
+

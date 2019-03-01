@@ -122,30 +122,29 @@ services:
     volumes:
     - ./parse/cloud:/app/cloud
 
-  hashdice:
-    build: ./app/
-    container_name: hashdice
-    #image: hashdice:latest
-
-    volumes:
-    - ./app:/app
-    - /app/node_modules
-    #    - /hash/cache/node_modules/
-    #    - /hash/logs:/hash/logs
-    ports:
-    - '7300:80'
-    env_file:
-    - .env
-    environment:
-    - docker=true
+#
+#  hashok:
+#    build: ./app/
+#    container_name: hashok
+#    #image: hashdice:latest
+#
+#    volumes:
+#    - ./app:/usr/src/app
+#    - /usr/src/app/node_modules
+#    #    - /hash/cache/node_modules/
+#    #    - /hash/logs:/hash/logs
+#    ports:
+#    - '7300:80'
+#    env_file:
+#    - .env
+#    environment:
+#    - docker=true
 
     #command: "npx pm2 start ecosystem.config.js --no-daemon"
 
-
 networks:
-  genv-dev:
-    driver: bridge
-    ipam:
-      config:
-      - subnet: 172.3.0.0/24
+  default:
+    external:
+      name: ${GENV_DOCKER_NETWORK}
+
 

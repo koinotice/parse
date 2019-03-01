@@ -18,17 +18,21 @@ const Order = Parse.Object.extend("Order");
 
 async function main1() {
     const that = this
-
-
-    const query = new Parse.Query(Order);
-    var a= new  Boolean("false")
-    console.log(a)
-    query.equalTo('closed', a);
-
-
+    const query = new Parse.Query("Order");
+     query.include("token")
     const data = await query.find()
+    const dc = []
+    data.forEach(function (n) {
+        dc.push(n.toJSON())
+    })
+    console.log(dc)
+    const groups = _.groupBy(dc, "token")
+    var obj = {}
+    _.map(groups, function (e, n) {
+        obj[n] = e.length;
+    })
 
-    //console.log(data)
+    console.log(obj)
 }
 
 main1()

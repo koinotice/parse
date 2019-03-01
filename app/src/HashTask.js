@@ -241,6 +241,14 @@ class HashTask {
             nats.publish(reply, JSON.stringify({result: {get: true}}));
         });
 
+        nats.subscribe('get.hash.messages', function (req, reply) {
+            nats.publish(reply, JSON.stringify({result: {model: room}}));
+        });
+
+        nats.subscribe('access.hash.messages', (req, reply) => {
+            nats.publish(reply, JSON.stringify({result: {get: true}}));
+        });
+
         nats.publish('system.reset', JSON.stringify({resources: ['hash.>']}));
 
         logger.info("websocket rooms")

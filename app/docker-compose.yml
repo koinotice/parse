@@ -2,16 +2,14 @@ version: '3'
 
 services:
 
-  hashgame:
+  tenguess:
     build: .
-    container_name: hashgame
+    container_name: tenguess
     #image: hashdice:latest
 
     volumes:
-    - .:/usr/src/app
-    - /usr/src/app/node_modules
-    #    - /hash/cache/node_modules/
-    #    - /hash/logs:/hash/logs
+    - .:/app
+    - /app/node_modules
     ports:
     - '7300:80'
     env_file:
@@ -19,28 +17,7 @@ services:
     environment:
     - docker=true
 
-
-
-#    networks:
-#    - genv-dev
-#
-#
-#networks:
-#  genv-dev:
-#    driver: bridge
-#    ipam:
-#      config:
-#      - subnet: 172.3.0.0/24
-
-
-#  app:
-#    build: ./app
-#    ports:
-#    - 5555:5555
-#    env_file:
-#    - ./parse.env
-#    volumes:
-#    - ./app/src:/usr/src/app/src
-#    - /usr/src/app/node_modules
-
-
+networks:
+  default:
+    external:
+      name: HASH_GAME_NET

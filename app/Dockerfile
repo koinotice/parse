@@ -1,18 +1,24 @@
-FROM node
+FROM node as builder
 
-# Create app directory
-RUN mkdir -p /app
-RUN mkdir -p /hash
+ARG NODE_ENV=development
+ENV NODE_ENV=${NODE_ENV}
+
+ENV NPM_CONFIG_UNSAFE_PERM=true
+
+
+COPY package*.json ./
+RUN yarn
+
+
+# The instructions for second stage
+FROM node as pm2
+RUN yarn global add pm2
+
+FROM pm2
 WORKDIR /app
+COPY --from=builder node_modules node_modules
 
-# Install app dependencies
-COPY package.json /app
-
-RUN npm install
-RUN npm install pm2 -g
-# Bundle app source
-COPY . /app
-#RUN yarn build
+COPY . .
 
 EXPOSE 80
 CMD ["pm2-runtime", "./ecosystem.config.js"]
